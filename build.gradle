@@ -10,8 +10,8 @@ android {
     applicationId "juloo.keyboard2"
     minSdk 4
     targetSdkVersion 33
-    versionCode 38
-    versionName "1.26.0"
+    versionCode 37
+    versionName "1.25.1"
   }
 
   sourceSets {
@@ -115,13 +115,17 @@ tasks.register('genLayoutsList') {
 
 tasks.register('checkKeyboardLayouts') {
   println "\nChecking layouts"
-  exec {
-    def layouts = new File(projectDir, "srcs/layouts").listFiles().findAll {
-      it.name.endsWith(".xml")
+  new ByteArrayOutputStream().withStream { bos ->
+    exec {
+      def layouts = new File(projectDir, "res/xml").listFiles().findAll {
+          it.isFile() && it.name.endsWith(".xml")
+      }
+      workingDir = projectDir
+      commandLine("python", "check_layout.py", *layouts)
+      standardOutput = bos
     }
-    workingDir = projectDir
-    commandLine("python", "check_layout.py", *layouts)
-    standardOutput = new FileOutputStream("${projectDir}/check_layout.output")
+
+    new File(projectDir, "check_layout.output").write(bos.toString())
   }
 }
 
@@ -136,7 +140,6 @@ tasks.register('syncTranslations') {
 tasks.named("preBuild") {
   dependsOn += "initDebugKeystore"
   dependsOn += "copyRawQwertyUS"
-  dependsOn += "copyLayoutDefinitions"
 }
 
 tasks.register('initDebugKeystore') {
@@ -153,15 +156,7 @@ tasks.register('initDebugKeystore') {
 tasks.register('copyRawQwertyUS')
 {
   copy {
-    from "srcs/layouts/latn_qwerty_us.xml"
+    from "res/xml/latn_qwerty_us.xml"
     into "build/generated-resources/raw"
-  }
-}
-
-tasks.register('copyLayoutDefinitions')
-{
-  copy {
-    from "srcs/layouts"
-    into "build/generated-resources/xml"
   }
 }

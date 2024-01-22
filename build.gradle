@@ -62,7 +62,7 @@ android {
       applicationIdSuffix "" //".debug"
       resValue "string", "app_name", "@string/app_name_release" //debug"
       //resValue "bool", "debug_logs", "true"
-      signingConfig signingConfigs.release //debug
+      signingConfig signingConfigs.debug
     }
   }
 

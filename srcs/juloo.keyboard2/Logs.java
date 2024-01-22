@@ -13,7 +13,7 @@ public final class Logs
 
   public static void set_debug_logs(boolean d)
   {
-    _debug_logs = d ? new LogPrinter(Log.DEBUG, TAG) : null;
+    _debug_logs = null; //d ? new LogPrinter(Log.DEBUG, TAG) : null;
   }
 
   public static void debug_startup_input_view(EditorInfo info, Config conf)
@@ -40,7 +40,7 @@ public final class Logs
 
   public static void exn(String msg, Exception e)
   {
-    Log.e(TAG, msg, e);
+    //Log.e(TAG, msg, e);
   }
 
   public static void trace()

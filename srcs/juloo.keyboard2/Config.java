@@ -323,7 +323,7 @@ public final class Config
   {
     float value;
     try { value = _prefs.getInt(pref_name, -1); }
-    catch (Exception e) { value = _prefs.getFloat(pref_name, -1f); }
+    catch (Exception ignored) { value = _prefs.getFloat(pref_name, -1f); }
     if (value < 0f)
       value = def;
     return (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, dm));

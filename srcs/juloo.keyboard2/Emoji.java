@@ -82,6 +82,6 @@ public class Emoji
       num_groups = groups.size();
       emojis_by_group = groups.toArray(new Emoji[0][]);
     }
-    catch (IOException e) {}
+    catch (IOException ignored) {}
   }
 }

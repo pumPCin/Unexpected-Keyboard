@@ -206,7 +206,7 @@ public final class KeyboardData
     {
       return load_string_exn(src);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
       return null;
     }

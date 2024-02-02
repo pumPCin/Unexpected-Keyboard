@@ -74,7 +74,7 @@ public class EmojiGridView extends GridView
   {
     SharedPreferences.Editor edit;
     try { edit = emojiSharedPreferences().edit(); }
-    catch (Exception _e) { return; }
+    catch (Exception ignored) { return; }
     HashSet<String> set = new HashSet<String>();
     for (Emoji emoji : _lastUsed.keySet())
       set.add(String.valueOf(_lastUsed.get(emoji)) + "-" + emoji.name());
@@ -89,7 +89,7 @@ public class EmojiGridView extends GridView
     // Storage might not be available (eg. the device is locked), avoid
     // crashing.
     try { prefs = emojiSharedPreferences(); }
-    catch (Exception _e) { return; }
+    catch (Exception ignored) { return; }
     Set<String> lastUseSet = prefs.getStringSet(LAST_USE_PREF, null);
     if (lastUseSet != null)
       for (String emojiData : lastUseSet)

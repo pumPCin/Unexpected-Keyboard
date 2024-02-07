@@ -60,7 +60,7 @@ android {
       shrinkResources true //false
       debuggable false //true
       applicationIdSuffix "" //.debug"
-	  proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
       resValue "string", "app_name", "@string/app_name_release" //debug"
       resValue "bool", "debug_logs", "false"
       signingConfig signingConfigs.debug

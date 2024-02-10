@@ -1,5 +1,6 @@
 package juloo.keyboard2;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build.VERSION;
@@ -7,6 +8,7 @@ import android.preference.PreferenceManager;
 import java.util.Map;
 import java.util.Set;
 
+@TargetApi(24)
 public final class DirectBootAwarePreferences
 {
   /* On API >= 24, preferences are read from the device protected storage. This
@@ -57,7 +59,7 @@ public final class DirectBootAwarePreferences
       // Device is locked, migrate later.
       return;
     }
-    prefs.edit().putBoolean("need_migration", false).commit();
+    prefs.edit().putBoolean("need_migration", false).apply();
     copy_shared_preferences(prefs, protected_prefs);
   }
 
@@ -81,6 +83,6 @@ public final class DirectBootAwarePreferences
       else if (v instanceof Set)
         e.putStringSet(k, (Set<String>)v);
     }
-    e.commit();
+    e.apply();
   }
 }

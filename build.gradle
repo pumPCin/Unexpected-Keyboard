@@ -86,7 +86,6 @@ android {
 }
 
 dependencies {
-
 }
 
 tasks.register('buildKeyboardFont') {
@@ -109,6 +108,7 @@ tasks.withType(Test).configureEach {
   dependsOn 'genLayoutsList'
   dependsOn 'checkKeyboardLayouts'
   dependsOn 'syncTranslations'
+  dependsOn 'compileComposeSequences'
 }
 
 tasks.register('genLayoutsList') {
@@ -136,6 +136,19 @@ tasks.register('syncTranslations') {
   exec {
     workingDir = projectDir
     commandLine "python", "sync_translations.py"
+  }
+}
+
+tasks.register('compileComposeSequences') {
+  def out = "srcs/juloo.keyboard2/ComposeKeyData.java"
+  println "\nGenerating ${out}"
+  exec {
+    def sequences = new File(projectDir, "srcs/compose").listFiles().findAll {
+      !it.name.endsWith(".py")
+    }
+    workingDir = projectDir
+    commandLine("python", "srcs/compose/compile.py", *sequences)
+    standardOutput = new FileOutputStream("${projectDir}/${out}")
   }
 }
 

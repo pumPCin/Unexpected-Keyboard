@@ -13,4 +13,4 @@ jobs:
       uses: actions/checkout@v4
     - run: python3 sync_translations.py
     - name: "Check that strings files are uptodate, otherwise run 'python3 sync_translations.py'"
-      run: git add -N . && git diff --exit-code
+      run: git diff --exit-code

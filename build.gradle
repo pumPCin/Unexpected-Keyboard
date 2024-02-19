@@ -181,6 +181,7 @@ tasks.register('copyLayoutDefinitions')
 {
   copy {
     from "srcs/layouts"
+    include "*.xml"
     into "build/generated-resources/xml"
   }
 }

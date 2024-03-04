@@ -9,23 +9,8 @@ import glob, os
 # Sync store title and descriptions to the 'metadata/' directory.
 
 VALUE_DIR_TO_METADATA = {
-        "cs": "cs-CZ",
-        "de": "de-DE",
         "en": "en-US",
-        "es": "es-ES",
-        "fa": "fa-IR",
-        "fr": "fr-FR",
-        "it": "it-IT",
-        "ko": "ko-KR",
-        "lv": "lv",
-        "pl": "pl-PL",
-        "pt": "pt-BR",
-        "ro": "ro",
         "ru": "ru-RU",
-        "tr": "tr-TR",
-        "uk": "uk",
-        "vi": "vi",
-        "zh-rCN": "zh-CN",
         }
 
 # Dict of strings. Key is the pair string name and product field (often None).

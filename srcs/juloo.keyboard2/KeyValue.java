@@ -3,7 +3,7 @@ package juloo.keyboard2;
 import android.view.KeyEvent;
 import java.util.HashMap;
 
-public final class KeyValue
+public final class KeyValue implements Comparable<KeyValue>
 {
   public static enum Event
   {
@@ -26,7 +26,6 @@ public final class KeyValue
   // Must be evaluated in the reverse order of their values.
   public static enum Modifier
   {
-    COMPOSE_PENDING,
     SHIFT,
     CTRL,
     ALT,
@@ -89,8 +88,8 @@ public final class KeyValue
 
   public static enum Kind
   {
-    Char, String, Keyevent, Event, Modifier, Editing, Placeholder,
-    Compose_pending
+    Char, String, Keyevent, Event, Compose_pending, Modifier, Editing,
+    Placeholder
   }
 
   private static final int FLAGS_OFFSET = 19;
@@ -224,6 +223,18 @@ public final class KeyValue
     return sameKey((KeyValue)obj);
   }
 
+  public int compareTo(KeyValue snd)
+  {
+    // Compare the kind and value first, then the flags.
+    int d = (_code & ~FLAGS_BITS) - (snd._code & ~FLAGS_BITS);
+    if (d != 0)
+      return d;
+    d = _code - snd._code;
+    if (d != 0)
+      return d;
+    return _symbol.compareTo(snd._symbol);
+  }
+
   /** Type-safe alternative to [equals]. */
   public boolean sameKey(KeyValue snd)
   {
@@ -328,7 +339,13 @@ public final class KeyValue
   public static KeyValue makeComposePending(String symbol, int state, int flags)
   {
     return new KeyValue(symbol, Kind.Compose_pending, state,
-        flags | FLAG_SPECIAL);
+        flags | FLAG_LATCH);
+  }
+
+  public static KeyValue makeComposePending(int symbol, int state, int flags)
+  {
+    return makeComposePending(String.valueOf((char)symbol), state,
+        flags | FLAG_KEY_FONT);
   }
 
   /** Make a key that types a string. A char key is returned for a string of
@@ -493,7 +510,7 @@ public final class KeyValue
       case "autofill": return editingKey("auto", Editing.AUTOFILL);
 
       /* The compose key */
-      case "compose": return modifierKey(0xE016, Modifier.COMPOSE_PENDING, FLAG_SECONDARY | FLAG_SMALLER_FONT);
+      case "compose": return makeComposePending(0xE016, 0, FLAG_SECONDARY | FLAG_SMALLER_FONT | FLAG_SPECIAL);
 
       /* Placeholder keys */
       case "removed": return placeholderKey(Placeholder.REMOVED);

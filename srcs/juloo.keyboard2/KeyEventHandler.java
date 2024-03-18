@@ -69,9 +69,6 @@ public final class KeyEventHandler implements Config.IKeyEventHandler
           case META:
             _autocap.stop();
             break;
-          case COMPOSE_PENDING:
-            KeyModifier.set_compose_pending(0);
-            break;
         }
         break;
       default: break;
@@ -95,7 +92,6 @@ public final class KeyEventHandler implements Config.IKeyEventHandler
       case Modifier: break;
       case Editing: handle_editing_key(key.getEditing()); break;
       case Compose_pending:
-        KeyModifier.set_compose_pending(key.getPendingCompose());
         _recv.set_compose_pending(true);
         break;
     }
@@ -113,7 +109,7 @@ public final class KeyEventHandler implements Config.IKeyEventHandler
   void update_meta_state(Pointers.Modifiers mods)
   {
     // Released modifiers
-    Iterator<KeyValue.Modifier> it = _mods.diff(mods);
+    Iterator<KeyValue> it = _mods.diff(mods);
     while (it.hasNext())
       sendMetaKeyForModifier(it.next(), false);
     // Activated modifiers
@@ -147,23 +143,28 @@ public final class KeyEventHandler implements Config.IKeyEventHandler
     }
   }
 
-  void sendMetaKeyForModifier(KeyValue.Modifier mod, boolean down)
+  void sendMetaKeyForModifier(KeyValue kv, boolean down)
   {
-    switch (mod)
+    switch (kv.getKind())
     {
-      case CTRL:
-        sendMetaKey(KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_LEFT_ON | KeyEvent.META_CTRL_ON, down);
-        break;
-      case ALT:
-        sendMetaKey(KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.META_ALT_LEFT_ON | KeyEvent.META_ALT_ON, down);
-        break;
-      case SHIFT:
-        sendMetaKey(KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.META_SHIFT_LEFT_ON | KeyEvent.META_SHIFT_ON, down);
-        break;
-      case META:
-        sendMetaKey(KeyEvent.KEYCODE_META_LEFT, KeyEvent.META_META_LEFT_ON | KeyEvent.META_META_ON, down);
-        break;
-      default:
+      case Modifier:
+        switch (kv.getModifier())
+        {
+          case CTRL:
+            sendMetaKey(KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_LEFT_ON | KeyEvent.META_CTRL_ON, down);
+            break;
+          case ALT:
+            sendMetaKey(KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.META_ALT_LEFT_ON | KeyEvent.META_ALT_ON, down);
+            break;
+          case SHIFT:
+            sendMetaKey(KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.META_SHIFT_LEFT_ON | KeyEvent.META_SHIFT_ON, down);
+            break;
+          case META:
+            sendMetaKey(KeyEvent.KEYCODE_META_LEFT, KeyEvent.META_META_LEFT_ON | KeyEvent.META_META_ON, down);
+            break;
+          default:
+            break;
+        }
         break;
     }
   }
@@ -250,12 +251,11 @@ public final class KeyEventHandler implements Config.IKeyEventHandler
     if (conn == null)
       return;
     ExtractedText et = get_cursor_pos(conn);
+    int system_mods =
+      KeyEvent.META_CTRL_ON | KeyEvent.META_ALT_ON | KeyEvent.META_META_ON;
     // Fallback to sending key events
-    if (_move_cursor_force_fallback
-        || et == null
-        || _mods.has(KeyValue.Modifier.CTRL)
-        || _mods.has(KeyValue.Modifier.ALT)
-        || _mods.has(KeyValue.Modifier.META))
+    if (_move_cursor_force_fallback || et == null
+        || (_meta_state & system_mods) != 0)
     {
       move_cursor_fallback(d);
       return;
@@ -273,7 +273,7 @@ public final class KeyEventHandler implements Config.IKeyEventHandler
     {
       sel_end += d;
       // Leave 'sel_start' where it is if shift is pressed
-      if (!_mods.has(KeyValue.Modifier.SHIFT))
+      if ((_meta_state & KeyEvent.META_SHIFT_ON) == 0)
         sel_start = sel_end;
     }
     if (!conn.setSelection(sel_start, sel_end))

@@ -52,7 +52,7 @@ android {
       debuggable false
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
       resValue "string", "app_name", "@string/app_name_release"
-      signingConfig signingConfigs.release
+      signingConfig signingConfigs.debug
     }
 
     debug {

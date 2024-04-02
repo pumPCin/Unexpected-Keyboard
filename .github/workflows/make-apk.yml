@@ -36,7 +36,7 @@ jobs:
         DEBUG_KEY_ALIAS: debug
         DEBUG_KEY_PASSWORD: debug0
       with:
-        arguments: assembleDebug
+        arguments: assembleRelease
     - name: Artifact naming
       run: |
         artifact="${{github.repository_owner}} ${{github.ref_name}}"
@@ -45,5 +45,5 @@ jobs:
     - name: Upload debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: "${{env.artifact}} debug_apk"
-        path: build/outputs/apk/debug/*.apk
+        name: "${{env.artifact}} release_apk"
+        path: build/outputs/apk/release/*.apk

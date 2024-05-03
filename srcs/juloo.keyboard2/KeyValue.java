@@ -71,8 +71,6 @@ public final class KeyValue implements Comparable<KeyValue>
     SHARE,
     ASSIST,
     AUTOFILL,
-    CURSOR_LEFT,
-    CURSOR_RIGHT,
   }
 
   public static enum Placeholder
@@ -88,8 +86,9 @@ public final class KeyValue implements Comparable<KeyValue>
 
   public static enum Kind
   {
-    Char, String, Keyevent, Event, Compose_pending, Modifier, Editing,
-    Placeholder
+    Char, String, Keyevent, Event, Compose_pending, Hangul_initial,
+    Hangul_medial, Modifier, Editing, Placeholder,
+    Cursor_move // Value is encoded as a 16-bit integer
   }
 
   private static final int FLAGS_OFFSET = 19;
@@ -194,6 +193,19 @@ public final class KeyValue implements Comparable<KeyValue>
   public int getPendingCompose()
   {
     return (_code & VALUE_BITS);
+  }
+
+  /** Defined only when [getKind()] is [Kind.Hangul_initial] or
+      [Kind.Hangul_medial]. */
+  public int getHangulPrecomposed()
+  {
+    return (_code & VALUE_BITS);
+  }
+
+  /** Defined only when [getKind() == Kind.Cursor_move]. */
+  public short getCursorMove()
+  {
+    return (short)(_code & VALUE_BITS);
   }
 
   /* Update the char and the symbol. */
@@ -325,6 +337,16 @@ public final class KeyValue implements Comparable<KeyValue>
     return editingKey(String.valueOf((char)symbol), action, FLAG_KEY_FONT);
   }
 
+  /** A key that moves the cursor [d] times to the right. If [d] is negative,
+      it moves the cursor [abs(d)] times to the left. */
+  public static KeyValue cursorMoveKey(int d)
+  {
+    int symbol = (d < 0) ? 0xE008 : 0xE006;
+    return new KeyValue(String.valueOf((char)symbol), Kind.Cursor_move,
+        ((short)d) & 0xFFFF,
+        FLAG_SPECIAL | FLAG_SECONDARY | FLAG_KEY_FONT);
+  }
+
   /** A key that do nothing but has a unique ID. */
   private static KeyValue placeholderKey(Placeholder id)
   {
@@ -351,6 +373,25 @@ public final class KeyValue implements Comparable<KeyValue>
   {
     return makeComposePending(String.valueOf((char)symbol), state,
         flags | FLAG_KEY_FONT);
+  }
+
+  public static KeyValue makeHangulInitial(String symbol, int initial_idx)
+  {
+    return new KeyValue(symbol, Kind.Hangul_initial, initial_idx * 588 + 44032,
+        FLAG_LATCH);
+  }
+
+  public static KeyValue makeHangulMedial(int precomposed, int medial_idx)
+  {
+    precomposed += medial_idx * 28;
+    return new KeyValue(String.valueOf((char)precomposed), Kind.Hangul_medial,
+        precomposed, FLAG_LATCH);
+  }
+
+  public static KeyValue makeHangulFinal(int precomposed, int final_idx)
+  {
+    precomposed += final_idx;
+    return KeyValue.makeCharKey((char)precomposed);
   }
 
   /** Make a key that types a string. A char key is returned for a string of
@@ -452,6 +493,7 @@ public final class KeyValue implements Comparable<KeyValue>
 
       /* Spaces */
       case "\\t": return charKey("\\t", '\t', 0); // Send the tab character
+      case "\\n": return charKey("\\n", '\n', 0); // Send the newline character
       case "space": return charKey(0xE00D, ' ', FLAG_KEY_FONT | FLAG_SMALLER_FONT | FLAG_GREYED);
       case "nbsp": return charKey("\u237d", '\u00a0', FLAG_SMALLER_FONT);
 
@@ -507,8 +549,8 @@ public final class KeyValue implements Comparable<KeyValue>
       case "pasteAsPlainText": return editingKey(0xE035, Editing.PASTE_PLAIN);
       case "undo": return editingKey(0xE036, Editing.UNDO);
       case "redo": return editingKey(0xE037, Editing.REDO);
-      case "cursor_left": return editingKey(0xE008, Editing.CURSOR_LEFT);
-      case "cursor_right": return editingKey(0xE006, Editing.CURSOR_RIGHT);
+      case "cursor_left": return cursorMoveKey(-1);
+      case "cursor_right": return cursorMoveKey(1);
       // These keys are not used
       case "replaceText": return editingKey("repl", Editing.REPLACE);
       case "textAssist": return editingKey(0xE038, Editing.ASSIST);
@@ -521,6 +563,27 @@ public final class KeyValue implements Comparable<KeyValue>
       case "removed": return placeholderKey(Placeholder.REMOVED);
       case "f11_placeholder": return placeholderKey(Placeholder.F11);
       case "f12_placeholder": return placeholderKey(Placeholder.F12);
+
+      // Korean Hangul
+      case "ㄱ": return makeHangulInitial("ㄱ", 0);
+      case "ㄲ": return makeHangulInitial("ㄲ", 1);
+      case "ㄴ": return makeHangulInitial("ㄴ", 2);
+      case "ㄷ": return makeHangulInitial("ㄷ", 3);
+      case "ㄸ": return makeHangulInitial("ㄸ", 4);
+      case "ㄹ": return makeHangulInitial("ㄹ", 5);
+      case "ㅁ": return makeHangulInitial("ㅁ", 6);
+      case "ㅂ": return makeHangulInitial("ㅂ", 7);
+      case "ㅃ": return makeHangulInitial("ㅃ", 8);
+      case "ㅅ": return makeHangulInitial("ㅅ", 9);
+      case "ㅆ": return makeHangulInitial("ㅆ", 10);
+      case "ㅇ": return makeHangulInitial("ㅇ", 11);
+      case "ㅈ": return makeHangulInitial("ㅈ", 12);
+      case "ㅉ": return makeHangulInitial("ㅉ", 13);
+      case "ㅊ": return makeHangulInitial("ㅊ", 14);
+      case "ㅋ": return makeHangulInitial("ㅋ", 15);
+      case "ㅌ": return makeHangulInitial("ㅌ", 16);
+      case "ㅍ": return makeHangulInitial("ㅍ", 17);
+      case "ㅎ": return makeHangulInitial("ㅎ", 18);
 
       /* Fallback to a string key that types its name */
       default: return makeStringKey(name);

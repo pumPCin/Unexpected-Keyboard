@@ -56,6 +56,7 @@ public class Emoji
       }
     }
     catch (IOException ignored) {}
+  }
 
   public static int getNumGroups()
   {

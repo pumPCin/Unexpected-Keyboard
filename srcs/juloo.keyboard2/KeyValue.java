@@ -27,6 +27,7 @@ public final class KeyValue implements Comparable<KeyValue>
   public static enum Modifier
   {
     SHIFT,
+    GESTURE,
     CTRL,
     ALT,
     META,
@@ -54,8 +55,8 @@ public final class KeyValue implements Comparable<KeyValue>
     ARROW_RIGHT,
     BREVE,
     BAR,
-    FN, // Must be placed last to be applied first
-  }
+    FN,
+  } // Last is be applied first
 
   public static enum Editing
   {
@@ -404,6 +405,12 @@ public final class KeyValue implements Comparable<KeyValue>
       return new KeyValue(str, Kind.String, 0, flags | FLAG_SMALLER_FONT);
   }
 
+  /** Make a modifier key for passing to [KeyModifier]. */
+  public static KeyValue makeInternalModifier(Modifier mod)
+  {
+    return new KeyValue("", Kind.Modifier, mod.ordinal(), 0);
+  }
+
   public static KeyValue getKeyByName(String name)
   {
     switch (name)
@@ -496,6 +503,7 @@ public final class KeyValue implements Comparable<KeyValue>
       case "\\n": return charKey("\\n", '\n', 0); // Send the newline character
       case "space": return charKey(0xE00D, ' ', FLAG_KEY_FONT | FLAG_SMALLER_FONT | FLAG_GREYED);
       case "nbsp": return charKey("\u237d", '\u00a0', FLAG_SMALLER_FONT);
+      case "nnbsp": return charKey("\u2423", '\u202F', FLAG_SMALLER_FONT);
 
       /* bidi */
       case "lrm": return charKey("↱", '\u200e', 0); // Send left-to-right mark

@@ -67,8 +67,14 @@ public final class KeyboardData
     if (pos.next_to != null)
     {
       KeyPos next_to_pos = getKeys().get(pos.next_to);
-      if (next_to_pos != null
-          && add_key_to_pos(rows, kv, next_to_pos.with_dir(-1)))
+      // Use preferred direction if some preferred pos match
+      if (next_to_pos != null)
+        for (KeyPos p : pos.positions)
+          if ((p.row == -1 || p.row == next_to_pos.row)
+              && (p.col == -1 || p.col == next_to_pos.col)
+              && add_key_to_pos(rows, kv, next_to_pos.with_dir(p.dir)))
+            return true;
+      if (add_key_to_pos(rows, kv, next_to_pos.with_dir(-1)))
         return true;
     }
     for (KeyPos p : pos.positions)
@@ -608,6 +614,7 @@ public final class KeyboardData
   /** See [addExtraKeys()]. */
   public final static class PreferredPos
   {
+    /** Default position for extra keys. */
     public static final PreferredPos DEFAULT;
     public static final PreferredPos ANYWHERE;
 
@@ -622,6 +629,9 @@ public final class KeyboardData
     public KeyPos[] positions = ANYWHERE_POSITIONS;
 
     public PreferredPos() {}
+    public PreferredPos(KeyValue next_to_) { next_to = next_to_; }
+    public PreferredPos(KeyPos[] pos) { positions = pos; }
+    public PreferredPos(KeyValue next_to_, KeyPos[] pos) { next_to = next_to_; positions = pos; }
 
     public PreferredPos(PreferredPos src)
     {
@@ -634,13 +644,12 @@ public final class KeyboardData
 
     static
     {
-      DEFAULT = new PreferredPos();
-      DEFAULT.positions = new KeyPos[]{
-        new KeyPos(1, -1, 4),
-        new KeyPos(1, -1, 3),
-        new KeyPos(2, -1, 2),
-        new KeyPos(2, -1, 1)
-      };
+      DEFAULT = new PreferredPos(new KeyPos[]{
+          new KeyPos(1, -1, 4),
+          new KeyPos(1, -1, 3),
+          new KeyPos(2, -1, 2),
+          new KeyPos(2, -1, 1)
+        });
       ANYWHERE = new PreferredPos();
     }
   }

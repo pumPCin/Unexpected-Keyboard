@@ -67,6 +67,7 @@ public final class Config
   public boolean pin_entry_enabled;
   public boolean borderConfig;
   public int circle_sensitivity;
+  public boolean clipboard_history_enabled;
 
   // Dynamically set
   public boolean shouldOfferVoiceTyping;
@@ -185,6 +186,7 @@ public final class Config
     current_layout_portrait = _prefs.getInt("current_layout_portrait", 0);
     current_layout_landscape = _prefs.getInt("current_layout_landscape", 0);
     circle_sensitivity = Integer.valueOf(_prefs.getString("circle_sensitivity", "2"));
+    clipboard_history_enabled = _prefs.getBoolean("clipboard_history_enabled", false);
   }
 
   public int get_current_layout()
@@ -232,7 +234,7 @@ public final class Config
     extra_keys.put(KeyValue.getKeyByName("config"), KeyboardData.PreferredPos.ANYWHERE);
     extra_keys.putAll(extra_keys_param);
     extra_keys.putAll(extra_keys_custom);
-    if (extra_keys_subtype != null)
+    if (extra_keys_subtype != null && kw.locale_extra_keys)
     {
       Set<KeyValue> present = new HashSet<KeyValue>();
       present.addAll(kw.getKeys().keySet());
@@ -403,6 +405,7 @@ public final class Config
 
   private int getThemeId(Resources res, String theme_name)
   {
+    int night_mode = res.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
     switch (theme_name)
     {
       case "light": return R.style.Light;
@@ -413,9 +416,14 @@ public final class Config
       case "epaper": return R.style.ePaper;
       case "desert": return R.style.Desert;
       case "jungle": return R.style.Jungle;
+      case "monetlight": return R.style.MonetLight;
+      case "monetdark": return R.style.MonetDark;
+      case "monet":
+        if ((night_mode & Configuration.UI_MODE_NIGHT_NO) != 0)
+          return R.style.MonetLight;
+        return R.style.MonetDark;
       default:
       case "system":
-        int night_mode = res.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if ((night_mode & Configuration.UI_MODE_NIGHT_NO) != 0)
           return R.style.Light;
         return R.style.Dark;

@@ -99,7 +99,6 @@ public abstract class ListGroupPreference<E> extends PreferenceGroup
     }
     catch (JSONException ignored)
     {
-      //Logs.exn("load_from_string", e);
       return null;
     }
   }
@@ -115,10 +114,7 @@ public abstract class ListGroupPreference<E> extends PreferenceGroup
       {
         serialized_items.add(serializer.save_item(it));
       }
-      catch (JSONException ignored)
-      {
-        //Logs.exn("save_to_string", e);
-      }
+      catch (JSONException ignored) {}
     }
     return (new JSONArray(serialized_items)).toString();
   }

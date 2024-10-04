@@ -474,7 +474,7 @@ public final class KeyValue implements Comparable<KeyValue>
     {
       return KeyValueParser.parse(str);
     }
-    catch (KeyValueParser.ParseError _e)
+    catch (KeyValueParser.ParseError ignored)
     {
       return makeStringKey(str);
     }

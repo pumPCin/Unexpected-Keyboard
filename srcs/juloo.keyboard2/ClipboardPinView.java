@@ -76,7 +76,7 @@ public final class ClipboardPinView extends NonScrollListView
       for (int i = 0; i < arr.length(); i++)
         dst.add(arr.getString(i));
     }
-    catch (JSONException _e) {}
+    catch (JSONException ignored) {}
   }
 
   static void save_to_prefs(SharedPreferences store, List<String> entries)

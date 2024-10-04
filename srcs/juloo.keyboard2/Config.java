@@ -476,7 +476,6 @@ public final class Config
   public static void migrate(SharedPreferences prefs)
   {
     int saved_version = prefs.getInt("version", 0);
-    Logs.debug_config_migration(saved_version, CONFIG_VERSION);
     if (saved_version == CONFIG_VERSION)
       return;
     SharedPreferences.Editor e = prefs.edit();

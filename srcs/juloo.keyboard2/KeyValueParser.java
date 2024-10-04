@@ -105,7 +105,7 @@ public final class KeyValueParser
 
   static boolean match(Matcher m, Pattern pat)
   {
-    try { m.region(m.end(), m.regionEnd()); } catch (Exception _e) {}
+    try { m.region(m.end(), m.regionEnd()); } catch (Exception ignored) {}
     m.usePattern(pat);
     return m.lookingAt();
   }
@@ -133,7 +133,7 @@ public final class KeyValueParser
     {
       char c = m.group(0).charAt(0);
       msg_.append(" at character '").append(c).append("'");
-    } catch (IllegalStateException _e) {}
+    } catch (IllegalStateException ignored) {}
     msg_.append(" at position ");
     msg_.append(i);
     msg_.append(": ");

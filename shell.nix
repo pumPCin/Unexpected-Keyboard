@@ -4,13 +4,13 @@
 } }:
 
 let
-  jdk = pkgs.openjdk17;
-  build_tools_version = "33.0.1";
+  jdk = pkgs.openjdk21;
+  build_tools_version = "35";
 
   android = pkgs.androidenv.composeAndroidPackages {
     buildToolsVersions = [ build_tools_version ];
-    platformVersions = [ "34" ];
-    abiVersions = [ "armeabi-v7a" ];
+    platformVersions = [ "35" ];
+    abiVersions = [ "arm64-v8a" ];
   };
 
   ANDROID_SDK_ROOT = "${android.androidsdk}/libexec/android-sdk";

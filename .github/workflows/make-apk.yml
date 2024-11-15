@@ -12,22 +12,21 @@ jobs:
     - uses: actions/setup-java@v4
       with:
         distribution: 'zulu' # See 'Supported distributions' for available options
-        java-version: '17'
+        java-version: '21'
+
     - name: Checkout repo
       uses: actions/checkout@v4
+
     - name: Restore debug keystore from GitHub Secrets
       run: |
-        # Check if exist and use the secret named DEBUG_KEYSTORE
-        # The contents of the secret can be obtained -
-        #  from the debug.keystore.asc from you local folder 
-        #  (refer to CONTRIBUTING.md Using the local debug.keystore on the Github CI actions)
-        if [[ ! "${{ secrets.DEBUG_KEYSTORE }}" = "" ]]; then
+         if [[ ! "${{ secrets.DEBUG_KEYSTORE }}" = "" ]]; then
             echo "${{ secrets.DEBUG_KEYSTORE }}" > "debug.keystore.asc"
             if [[ -s "debug.keystore.asc" ]]; then
                 echo "Restoring debug keystore from GitHub secrets"
                 gpg -d --passphrase "debug0" --batch "debug.keystore.asc" > "debug.keystore"
             fi
         fi
+
     - name: Build debug APK
       uses: gradle/actions/setup-gradle@v3
       env:
@@ -37,11 +36,13 @@ jobs:
         DEBUG_KEY_PASSWORD: debug0
       with:
         arguments: assembleRelease
+
     - name: Artifact naming
       run: |
         artifact="${{github.repository_owner}} ${{github.ref_name}}"
         artifact="${artifact//\//-}" # replace slashes
         echo "artifact=${artifact}" >> $GITHUB_ENV
+
     - name: Upload debug APK
       uses: actions/upload-artifact@v4
       with:

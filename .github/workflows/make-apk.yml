@@ -17,7 +17,11 @@ jobs:
       uses: actions/checkout@v4
     - name: Restore debug keystore from GitHub Secrets
       run: |
-         if [[ ! "${{ secrets.DEBUG_KEYSTORE }}" = "" ]]; then
+        # Check if exist and use the secret named DEBUG_KEYSTORE
+        # The contents of the secret can be obtained -
+        #  from the debug.keystore.asc from you local folder 
+        #  (refer to CONTRIBUTING.md Using the local debug.keystore on the Github CI actions)
+        if [[ ! "${{ secrets.DEBUG_KEYSTORE }}" = "" ]]; then
             echo "${{ secrets.DEBUG_KEYSTORE }}" > "debug.keystore.asc"
             if [[ -s "debug.keystore.asc" ]]; then
                 echo "Restoring debug keystore from GitHub secrets"

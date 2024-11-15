@@ -12,7 +12,7 @@ jobs:
     - uses: actions/setup-java@v4
       with:
         distribution: 'zulu' # See 'Supported distributions' for available options
-        java-version: '21'
+        java-version: '17'
     - name: Checkout repo
       uses: actions/checkout@v4
     - name: Restore debug keystore from GitHub Secrets

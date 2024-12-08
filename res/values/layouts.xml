@@ -11,10 +11,12 @@
     <item>@string/pref_layout_e_system</item>
     <item>QWERTY (US)</item>
     <item>ЙЦУКЕН (Русский)</item>
+    <item>@string/pref_layout_e_system</item>
   </string-array>
   <integer-array name="layout_ids">
     <item>-1</item>
     <item>@xml/latn_qwerty_us</item>
     <item>@xml/cyrl_jcuken_ru</item>
+    <item>-1</item>
   </integer-array>
 </resources>

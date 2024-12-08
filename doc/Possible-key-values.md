@@ -91,6 +91,7 @@ Value                | Meaning
 `accent_dot_below`   | Dot below. `ạ`
 `accent_horn`        | Horn accent. `ơ`
 `accent_hook_above`  | Hook accent. `ả`
+`accent_double_grave`  | Double grave accent. `ȁ`
 `superscript`        | Superscript. `ᵃ`
 `subscript`          | Subscript. `ₐ`
 `ordinal`            | Turns `a` and `o` into `ª` and `º`.
@@ -188,3 +189,11 @@ keys.
 For example:
 - `:char symbol='љ':q`, which is used to implement `ctrl` shortcuts in cyrillic
   layouts.
+
+### Kind `keyevent`
+
+Defines a key that sends an Android [key event](https://developer.android.com/reference/android/view/KeyEvent).
+`<payload>` is the key event number.
+
+For example:
+- `:keyevent symbol='⏯' flags='small':85`

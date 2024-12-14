@@ -29,13 +29,14 @@ jobs:
                 gpg -d --passphrase "debug0" --batch "debug.keystore.asc" > "debug.keystore"
             fi
         fi
-    - name: Build APK
+    - name: Setup gradle
       uses: gradle/actions/setup-gradle@v4
       env:
         DEBUG_KEYSTORE: "debug.keystore"
         DEBUG_KEYSTORE_PASSWORD: debug0
         DEBUG_KEY_ALIAS: debug
         DEBUG_KEY_PASSWORD: debug0
+    - name: Build APK
       run: ./gradlew assembleRelease
     - name: Artifact naming
       run: |

@@ -76,7 +76,7 @@ public final class KeyValueParser
         payload = parsePayloadWord(m);
         int eventcode = 0;
         try { eventcode = Integer.parseInt(payload); }
-        catch (Exception _e)
+        catch (Exception ignored)
         { parseError("Expected an integer payload", m); }
         if (symbol == null)
           symbol = String.valueOf(eventcode);

@@ -1,5 +1,5 @@
 plugins {
-  id 'com.android.application' version '8.7.2'
+  id 'com.android.application' version '8.7.3'
 }
 
 dependencies {
@@ -15,7 +15,7 @@ android {
     minSdk 11
     targetSdkVersion 35
     versionCode 43
-    versionName "1.29.3"
+    versionName "1.29.4"
   }
 
   sourceSets {
@@ -64,12 +64,12 @@ android {
     }
 
     debug {
-      minifyEnabled true //false
-      shrinkResources true //false
-      debuggable false //true
-      applicationIdSuffix "" //.debug"
+      minifyEnabled true
+      shrinkResources true
+      debuggable false
+      applicationIdSuffix ""
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-      resValue "string", "app_name", "@string/app_name_release" //debug"
+      resValue "string", "app_name", "@string/app_name_release"
       resValue "bool", "debug_logs", "false"
       signingConfig signingConfigs.debug
     }

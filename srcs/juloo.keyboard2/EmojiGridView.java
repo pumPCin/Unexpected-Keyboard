@@ -116,7 +116,7 @@ public class EmojiGridView extends GridView
 
     SharedPreferences prefs;
     try { prefs = emojiSharedPreferences(); }
-    catch (Exception e) { return; }
+    catch (Exception ignored) { return; }
 
     Set<String> lastUsed = prefs.getStringSet(LAST_USE_PREF, null);
     if (lastUsed != null && !prefs.getBoolean(MIGRATION_CHECK_KEY, false))

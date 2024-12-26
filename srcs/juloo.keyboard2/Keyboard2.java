@@ -8,8 +8,6 @@ import android.inputmethodservice.InputMethodService;
 import android.os.Build.VERSION;
 import android.os.IBinder;
 import android.text.InputType;
-import android.util.Log;
-import android.util.LogPrinter;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -113,7 +111,6 @@ public class Keyboard2 extends InputMethodService
     _config = Config.globalConfig();
     _keyboardView = (Keyboard2View)inflate_view(R.layout.keyboard);
     _keyboardView.reset();
-    Logs.set_debug_logs(getResources().getBoolean(R.bool.debug_logs));
     ClipboardHistoryService.on_startup(this, _keyeventhandler);
   }
 
@@ -270,7 +267,6 @@ public class Keyboard2 extends InputMethodService
     _keyboardView.setKeyboard(current_layout());
     _keyeventhandler.started(info);
     setInputView(_keyboardView);
-    Logs.debug_startup_input_view(info, _config);
   }
 
   @Override

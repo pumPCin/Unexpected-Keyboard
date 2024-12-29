@@ -104,23 +104,13 @@ public final class KeyModifier
     return k;
   }
 
+  /** Return the compose state that modifies the numpad script. */
   public static int modify_numpad_script(String numpad_script)
   {
-    if (numpad_script == null)
-      return -1;
-    switch (numpad_script)
-    {
-      case "hindu-arabic": return ComposeKeyData.numpad_hindu;
-      case "bengali": return ComposeKeyData.numpad_bengali;
-      case "devanagari": return ComposeKeyData.numpad_devanagari;
-      case "persian": return ComposeKeyData.numpad_persian;
-      case "gujarati": return ComposeKeyData.numpad_gujarati;
-      case "kannada": return ComposeKeyData.numpad_kannada;
-      case "tamil": return ComposeKeyData.numpad_tamil;
-      default: return -1;
-    }
+    return -1;
   }
 
+  /** Apply the given compose state or fallback to the dead_char. */
   private static KeyValue apply_compose_or_dead_char(KeyValue k, int state, char dead_char)
   {
     switch (k.getKind())
@@ -343,6 +333,7 @@ public final class KeyModifier
     return shifted;
   }
 
+  /** Compose the precomposed initial with the medial [kv]. */
   private static KeyValue combine_hangul_initial(KeyValue kv, int precomposed)
   {
     switch (kv.getKind())

@@ -92,7 +92,7 @@ public final class KeyValue implements Comparable<KeyValue>
   {
     Char, String, Keyevent, Event, Compose_pending, Hangul_initial,
     Hangul_medial, Modifier, Editing, Placeholder,
-    Cursor_move, // Value is encoded as a 16-bit integer.
+    Slider, // [_payload] is a [KeyValue.Slider], value is slider repeatition.
     Complex, // [_payload] is a [KeyValue.Complex], value is [Complex.Kind].
   }
 
@@ -132,12 +132,10 @@ public final class KeyValue implements Comparable<KeyValue>
   }
 
   /**
-   * The symbol that is rendered on the keyboard as a [String].
-   * Except for keys of kind:
-   * - [String], this is also the string to output.
-   * - [Complex], this is an instance of [KeyValue.Complex].
+   * [_payload.toString()] is the symbol that is rendered on the keyboard.
+   * For keys of kind [String], this is also the string to output.
    */
-  private final Object _payload;
+  private final Comparable _payload;
 
   /** This field encodes three things: Kind, flags and value. */
   private final int _code;
@@ -161,9 +159,7 @@ public final class KeyValue implements Comparable<KeyValue>
       When [getKind() == Kind.String], also the string to send. */
   public String getString()
   {
-    if (getKind() == Kind.Complex)
-      return ((Complex)_payload).getSymbol();
-    return (String)_payload;
+    return _payload.toString();
   }
 
   /** Defined only when [getKind() == Kind.Char]. */
@@ -215,10 +211,16 @@ public final class KeyValue implements Comparable<KeyValue>
     return (_code & VALUE_BITS);
   }
 
-  /** Defined only when [getKind() == Kind.Cursor_move]. */
-  public short getCursorMove()
+  /** Defined only when [getKind() == Kind.Slider]. */
+  public Slider getSlider()
   {
-    return (short)(_code & VALUE_BITS);
+    return (Slider)_payload;
+  }
+
+  /** Defined only when [getKind() == Kind.Slider]. */
+  public int getSliderRepeat()
+  {
+    return ((int)(short)(_code & VALUE_BITS));
   }
 
   /** Defined only when [getKind() == Kind.Complex]. */
@@ -255,6 +257,7 @@ public final class KeyValue implements Comparable<KeyValue>
     return sameKey((KeyValue)obj);
   }
 
+  @Override
   public int compareTo(KeyValue snd)
   {
     // Compare the kind and value first, then the flags.
@@ -264,9 +267,7 @@ public final class KeyValue implements Comparable<KeyValue>
     d = _code - snd._code;
     if (d != 0)
       return d;
-    if (getKind() == Kind.Complex)
-      return ((Complex)_payload).compareTo((Complex)snd._payload);
-    return ((String)_payload).compareTo((String)snd._payload);
+    return _payload.compareTo(snd._payload);
   }
 
   /** Type-safe alternative to [equals]. */
@@ -289,7 +290,8 @@ public final class KeyValue implements Comparable<KeyValue>
     return "[KeyValue " + getKind().toString() + "+" + getFlags() + "+" + value + " \"" + getString() + "\"]";
   }
 
-  private KeyValue(Object p, int kind, int value, int flags)
+  /** [value] is an unsigned integer. */
+  private KeyValue(Comparable p, int kind, int value, int flags)
   {
     if (p == null)
       throw new NullPointerException("KeyValue payload cannot be null");
@@ -297,13 +299,12 @@ public final class KeyValue implements Comparable<KeyValue>
     _code = (kind & KIND_BITS) | (flags & FLAGS_BITS) | (value & VALUE_BITS);
   }
 
-  public KeyValue(Complex p, Complex.Kind value, int flags)
+  private KeyValue(Complex p, Complex.Kind value, int flags)
   {
-    this((Object)p, (Kind.Complex.ordinal() << KIND_OFFSET), value.ordinal(),
-        flags);
+    this(p, Kind.Complex, value.ordinal(), flags);
   }
 
-  public KeyValue(String p, Kind k, int v, int f)
+  public KeyValue(Comparable p, Kind k, int v, int f)
   {
     this(p, (k.ordinal() << KIND_OFFSET), v, f);
   }
@@ -373,13 +374,12 @@ public final class KeyValue implements Comparable<KeyValue>
     return editingKey(String.valueOf((char)symbol), action, FLAG_KEY_FONT);
   }
 
-  /** A key that moves the cursor [d] times to the right. If [d] is negative,
-      it moves the cursor [abs(d)] times to the left. */
-  public static KeyValue cursorMoveKey(int d)
+  /** A key that slides the property specified by [s] by the amount specified
+      with [repeatition]. */
+  public static KeyValue sliderKey(Slider s, int repeatition)
   {
-    int symbol = (d < 0) ? 0xE008 : 0xE006;
-    return new KeyValue(String.valueOf((char)symbol), Kind.Cursor_move,
-        ((short)d) & 0xFFFF,
+    // Casting to a short then back to a int to preserve the sign bit.
+    return new KeyValue(s, Kind.Slider, (short)repeatition & 0xFFFF,
         FLAG_SPECIAL | FLAG_SECONDARY | FLAG_KEY_FONT);
   }
 
@@ -685,8 +685,8 @@ public final class KeyValue implements Comparable<KeyValue>
       case "pasteAsPlainText": return editingKey(0xE035, Editing.PASTE_PLAIN);
       case "undo": return editingKey(0xE036, Editing.UNDO);
       case "redo": return editingKey(0xE037, Editing.REDO);
-      case "cursor_left": return cursorMoveKey(-1);
-      case "cursor_right": return cursorMoveKey(1);
+      case "cursor_left": return sliderKey(Slider.Cursor_left, 1);
+      case "cursor_right": return sliderKey(Slider.Cursor_right, 1);
       // These keys are not used
       case "replaceText": return editingKey("repl", Editing.REPLACE);
       case "textAssist": return editingKey(0xE038, Editing.ASSIST);
@@ -712,18 +712,26 @@ public final class KeyValue implements Comparable<KeyValue>
       throw new RuntimeException("Assertion failure");
   }
 
-  public static abstract class Complex
+  public static abstract class Complex implements Comparable<Complex>
   {
     public abstract String getSymbol();
 
     /** [compareTo] can assume that [snd] is an instance of the same class. */
+    @Override
     public abstract int compareTo(Complex snd);
 
+    @Override
     public boolean equals(Object snd)
     {
       if (snd instanceof Complex)
         return compareTo((Complex)snd) == 0;
       return false;
+    }
+
+    @Override
+    public String toString()
+    {
+      return getSymbol();
     }
 
     /** [hashCode] will be called on this class. */
@@ -745,8 +753,10 @@ public final class KeyValue implements Comparable<KeyValue>
         _symbol = _sym;
       }
 
+      @Override
       public String getSymbol() { return _symbol; }
 
+      @Override
       public int compareTo(Complex _snd)
       {
         StringWithSymbol snd = (StringWithSymbol)_snd;
@@ -755,5 +765,21 @@ public final class KeyValue implements Comparable<KeyValue>
         return _symbol.compareTo(snd._symbol);
       }
     }
+  };
+
+  public static enum Slider
+  {
+    Cursor_left(0xE008),
+    Cursor_right(0xE006);
+
+    final String symbol;
+
+    Slider(int symbol_)
+    {
+      symbol = String.valueOf((char)symbol_);
+    }
+
+    @Override
+    public String toString() { return symbol; }
   };
 }

@@ -90,10 +90,11 @@ public final class KeyValue implements Comparable<KeyValue>
 
   public static enum Kind
   {
-    Char, String, Keyevent, Event, Compose_pending, Hangul_initial,
-    Hangul_medial, Modifier, Editing, Placeholder,
+    Char, Keyevent, Event, Compose_pending, Hangul_initial, Hangul_medial,
+    Modifier, Editing, Placeholder,
+    String, // [_payload] is also the string to output, value is unused.
     Slider, // [_payload] is a [KeyValue.Slider], value is slider repeatition.
-    Complex, // [_payload] is a [KeyValue.Complex], value is [Complex.Kind].
+    StringWithSymbol, // [_payload] is a [KeyValue.StringWithSymbol], value is unused.
   }
 
   private static final int FLAGS_OFFSET = 19;
@@ -131,13 +132,12 @@ public final class KeyValue implements Comparable<KeyValue>
     check((((Kind.values().length - 1) << KIND_OFFSET) & ~KIND_BITS) == 0);
   }
 
-  /**
-   * [_payload.toString()] is the symbol that is rendered on the keyboard.
-   * For keys of kind [String], this is also the string to output.
-   */
+  /** [_payload.toString()] is the symbol that is rendered on the keyboard. */
   private final Comparable _payload;
 
-  /** This field encodes three things: Kind, flags and value. */
+  /** This field encodes three things: Kind (KIND_BITS), flags (FLAGS_BITS) and
+      value (VALUE_BITS).
+      The meaning of the value depends on the kind. */
   private final int _code;
 
   public Kind getKind()
@@ -223,16 +223,10 @@ public final class KeyValue implements Comparable<KeyValue>
     return ((int)(short)(_code & VALUE_BITS));
   }
 
-  /** Defined only when [getKind() == Kind.Complex]. */
-  public Complex getComplex()
+  /** Defined only when [getKind() == Kind.StringWithSymbol]. */
+  public String getStringWithSymbol()
   {
-    return (Complex)_payload;
-  }
-
-  /** Defined only when [getKind() == Kind.Complex]. */
-  public Complex.Kind getComplexKind()
-  {
-    return Complex.Kind.values()[(_code & VALUE_BITS)];
+    return ((StringWithSymbol)_payload).str;
   }
 
   /* Update the char and the symbol. */
@@ -267,6 +261,8 @@ public final class KeyValue implements Comparable<KeyValue>
     d = _code - snd._code;
     if (d != 0)
       return d;
+    // Calls [compareTo] assuming that if [_code] matches, then [_payload] are
+    // of the same class.
     return _payload.compareTo(snd._payload);
   }
 
@@ -275,7 +271,7 @@ public final class KeyValue implements Comparable<KeyValue>
   {
     if (snd == null)
       return false;
-    return _code == snd._code && _payload.equals(snd._payload);
+    return _code == snd._code && _payload.compareTo(snd._payload) == 0;
   }
 
   @Override
@@ -297,11 +293,6 @@ public final class KeyValue implements Comparable<KeyValue>
       throw new NullPointerException("KeyValue payload cannot be null");
     _payload = p;
     _code = (kind & KIND_BITS) | (flags & FLAGS_BITS) | (value & VALUE_BITS);
-  }
-
-  private KeyValue(Complex p, Complex.Kind value, int flags)
-  {
-    this(p, Kind.Complex, value.ordinal(), flags);
   }
 
   public KeyValue(Comparable p, Kind k, int v, int f)
@@ -459,8 +450,8 @@ public final class KeyValue implements Comparable<KeyValue>
 
   public static KeyValue makeStringKeyWithSymbol(String str, String symbol, int flags)
   {
-    return new KeyValue(new Complex.StringWithSymbol(str, symbol),
-        Complex.Kind.StringWithSymbol, flags);
+    return new KeyValue(new StringWithSymbol(str, symbol),
+        Kind.StringWithSymbol, 0, flags);
   }
 
   /** Make a modifier key for passing to [KeyModifier]. */
@@ -714,58 +705,26 @@ public final class KeyValue implements Comparable<KeyValue>
       throw new RuntimeException("Assertion failure");
   }
 
-  public static abstract class Complex implements Comparable<Complex>
+  public static final class StringWithSymbol implements Comparable<StringWithSymbol>
   {
-    public abstract String getSymbol();
+    public final String str;
+    final String _symbol;
 
-    /** [compareTo] can assume that [snd] is an instance of the same class. */
-    @Override
-    public abstract int compareTo(Complex snd);
-
-    @Override
-    public boolean equals(Object snd)
+    public StringWithSymbol(String _str, String _sym)
     {
-      if (snd instanceof Complex)
-        return compareTo((Complex)snd) == 0;
-      return false;
+      str = _str;
+      _symbol = _sym;
     }
 
     @Override
-    public String toString()
+    public String toString() { return _symbol; }
+
+    @Override
+    public int compareTo(StringWithSymbol snd)
     {
-      return getSymbol();
-    }
-
-    /** [hashCode] will be called on this class. */
-
-    /** The kind is stored in the [value] field of the key. */
-    public static enum Kind
-    {
-      StringWithSymbol,
-    }
-
-    public static final class StringWithSymbol extends Complex
-    {
-      public final String str;
-      private final String _symbol;
-
-      public StringWithSymbol(String _str, String _sym)
-      {
-        str = _str;
-        _symbol = _sym;
-      }
-
-      @Override
-      public String getSymbol() { return _symbol; }
-
-      @Override
-      public int compareTo(Complex _snd)
-      {
-        StringWithSymbol snd = (StringWithSymbol)_snd;
-        int d = str.compareTo(snd.str);
-        if (d != 0) return d;
-        return _symbol.compareTo(snd._symbol);
-      }
+      int d = str.compareTo(snd.str);
+      if (d != 0) return d;
+      return _symbol.compareTo(snd._symbol);
     }
   };
 

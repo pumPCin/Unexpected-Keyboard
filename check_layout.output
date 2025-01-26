@@ -29,6 +29,8 @@ Layout includes some ASCII punctuation but not all, missing: $
 # beng_provat
 Layout includes some ASCII punctuation but not all, missing: $, &, *, ., /, <, >, [, \, ], `, {, |, }
 1 warnings
+# cyrl_fcuzhen_mn
+0 warnings
 # cyrl_jcuken_kk
 0 warnings
 # cyrl_jcuken_ru
@@ -132,6 +134,8 @@ Layout redefines the bottom row but some important keys are missing, missing: lo
 # latn_qwerty_lt
 0 warnings
 # latn_qwerty_lv
+0 warnings
+# latn_qwerty_mt
 0 warnings
 # latn_qwerty_no
 0 warnings

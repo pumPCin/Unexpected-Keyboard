@@ -4,5 +4,6 @@
   <g fill="none">
     <line x1="100" y1="45" x2="100" y2="155" stroke="#000" stroke-width="10"/>
     <circle cx="100" cy="100" r="55" stroke="#000" stroke-width="10"/>
+    <line x1="45" y1="45" x2="155" y2="155" stroke="#000" stroke-width="10"/>
   </g>
 </svg>

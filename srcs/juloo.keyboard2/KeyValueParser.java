@@ -97,7 +97,7 @@ public final class KeyValueParser
       parseError("Expected keyevent code", m);
     int eventcode = 0;
     try { eventcode = Integer.parseInt(m.group(0)); }
-    catch (Exception _e)
+    catch (Exception ignored)
     { parseError("Expected an integer payload", m); }
     return KeyValue.keyeventKey("", eventcode, 0);
   }
@@ -194,7 +194,7 @@ public final class KeyValueParser
           payload = parsePayloadWord(m);
           int eventcode = 0;
           try { eventcode = Integer.parseInt(payload); }
-          catch (Exception _e)
+          catch (Exception ignored)
           { parseError("Expected an integer payload", m); }
           if (symbol == null)
             symbol = String.valueOf(eventcode);
@@ -237,7 +237,7 @@ public final class KeyValueParser
 
     static boolean match(Matcher m, Pattern pat)
     {
-      try { m.region(m.end(), m.regionEnd()); } catch (Exception _e) {}
+      try { m.region(m.end(), m.regionEnd()); } catch (Exception ignored) {}
       m.usePattern(pat);
       return m.lookingAt();
     }
@@ -256,7 +256,7 @@ public final class KeyValueParser
 
   static boolean match(Matcher m, Pattern pat)
   {
-    try { m.region(m.end(), m.regionEnd()); } catch (Exception _e) {}
+    try { m.region(m.end(), m.regionEnd()); } catch (Exception ignored) {}
     m.usePattern(pat);
     return m.lookingAt();
   }
@@ -272,7 +272,7 @@ public final class KeyValueParser
     try
     {
       msg_.append(" at token '").append(m.group(0)).append("'");
-    } catch (IllegalStateException _e) {}
+    } catch (IllegalStateException ignored) {}
     msg_.append(" at position ");
     msg_.append(i);
     msg_.append(": ");

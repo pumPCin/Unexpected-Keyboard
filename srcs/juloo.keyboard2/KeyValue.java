@@ -96,6 +96,7 @@ public final class KeyValue implements Comparable<KeyValue>
     String, // [_payload] is also the string to output, value is unused.
     Slider, // [_payload] is a [KeyValue.Slider], value is slider repeatition.
     StringWithSymbol, // [_payload] is a [KeyValue.StringWithSymbol], value is unused.
+    Macro, // [_payload] is a [KeyValue.Macro], value is unused.
   }
 
   private static final int FLAGS_OFFSET = 20;
@@ -105,7 +106,8 @@ public final class KeyValue implements Comparable<KeyValue>
   public static final int FLAG_LATCH = (1 << FLAGS_OFFSET << 0);
   // Key can be locked by typing twice when enabled in settings
   public static final int FLAG_DOUBLE_TAP_LOCK = (1 << FLAGS_OFFSET << 1);
-  // Special keys are not repeated and don't clear latched modifiers.
+  // Special keys are not repeated.
+  // Special latchable keys don't clear latched modifiers.
   public static final int FLAG_SPECIAL = (1 << FLAGS_OFFSET << 2);
   // Whether the symbol should be greyed out. For example, keys that are not
   // part of the pending compose sequence.
@@ -227,6 +229,12 @@ public final class KeyValue implements Comparable<KeyValue>
   public String getStringWithSymbol()
   {
     return ((StringWithSymbol)_payload).str;
+  }
+
+  /** Defined only when [getKind() == Kind.Macro]. */
+  public KeyValue[] getMacro()
+  {
+    return ((Macro)_payload).keys;
   }
 
   /* Update the char and the symbol. */
@@ -460,31 +468,35 @@ public final class KeyValue implements Comparable<KeyValue>
         Kind.StringWithSymbol, 0, flags);
   }
 
+  public static KeyValue makeMacro(String symbol, KeyValue[] keys, int flags)
+  {
+    return new KeyValue(new Macro(keys, symbol), Kind.Macro, 0, flags);
+  }
+
   /** Make a modifier key for passing to [KeyModifier]. */
   public static KeyValue makeInternalModifier(Modifier mod)
   {
     return new KeyValue("", Kind.Modifier, mod.ordinal(), 0);
   }
 
-  public static KeyValue parseKeyDefinition(String str)
+  /** Return a key by its name. If the given name doesn't correspond to any
+      special key, it is parsed with [KeyValueParser]. */
+  public static KeyValue getKeyByName(String name)
   {
-    if (str.length() < 2 || str.charAt(0) != ':')
-      return makeStringKey(str);
+    KeyValue k = getSpecialKeyByName(name);
+    if (k != null)
+      return k;
     try
     {
-      return KeyValueParser.parse(str);
+      return KeyValueParser.parse(name);
     }
-    catch (KeyValueParser.ParseError ignored)
+    catch (KeyValueParser.ParseError _e)
     {
-      return makeStringKey(str);
+      return makeStringKey(name);
     }
   }
 
-  /**
-   * Return a key by its name. If the given name doesn't correspond to a key
-   * defined in this function, it is passed to [parseStringKey] as a fallback.
-   */
-  public static KeyValue getKeyByName(String name)
+  public static KeyValue getSpecialKeyByName(String name)
   {
     switch (name)
     {
@@ -700,8 +712,42 @@ public final class KeyValue implements Comparable<KeyValue>
       case "f11_placeholder": return placeholderKey(Placeholder.F11);
       case "f12_placeholder": return placeholderKey(Placeholder.F12);
 
-      /* The key is not one of the special ones. */
-      default: return parseKeyDefinition(name);
+      // Korean Hangul
+      case "ㄱ": return makeHangulInitial("ㄱ", 0);
+      case "ㄲ": return makeHangulInitial("ㄲ", 1);
+      case "ㄴ": return makeHangulInitial("ㄴ", 2);
+      case "ㄷ": return makeHangulInitial("ㄷ", 3);
+      case "ㄸ": return makeHangulInitial("ㄸ", 4);
+      case "ㄹ": return makeHangulInitial("ㄹ", 5);
+      case "ㅁ": return makeHangulInitial("ㅁ", 6);
+      case "ㅂ": return makeHangulInitial("ㅂ", 7);
+      case "ㅃ": return makeHangulInitial("ㅃ", 8);
+      case "ㅅ": return makeHangulInitial("ㅅ", 9);
+      case "ㅆ": return makeHangulInitial("ㅆ", 10);
+      case "ㅇ": return makeHangulInitial("ㅇ", 11);
+      case "ㅈ": return makeHangulInitial("ㅈ", 12);
+      case "ㅉ": return makeHangulInitial("ㅉ", 13);
+      case "ㅊ": return makeHangulInitial("ㅊ", 14);
+      case "ㅋ": return makeHangulInitial("ㅋ", 15);
+      case "ㅌ": return makeHangulInitial("ㅌ", 16);
+      case "ㅍ": return makeHangulInitial("ㅍ", 17);
+      case "ㅎ": return makeHangulInitial("ㅎ", 18);
+
+      /* Tamil letters should be smaller on the keyboard. */
+      case "ஔ": case "ந": case "ல": case "ழ": case "௯": case "க":
+      case "ஷ": case "ே": case "௨": case "ஜ": case "ங": case "ன":
+      case "௦": case "ை": case "ூ": case "ம": case "ஆ": case "௭":
+      case "௪": case "ா": case "ஶ": case "௬": case "வ": case "ஸ":
+      case "௮": case "ட": case "ப": case "ஈ": case "௩": case "ஒ":
+      case "ௌ": case "உ": case "௫": case "ய": case "ர": case "ு":
+      case "இ": case "ோ": case "ஓ": case "ஃ": case "ற": case "த":
+      case "௧": case "ண": case "ஏ": case "ஊ": case "ொ": case "ஞ":
+      case "அ": case "எ": case "ச": case "ெ": case "ஐ": case "ி":
+      case "௹": case "ள": case "ஹ": case "௰": case "ௐ": case "௱":
+      case "௲": case "௳":
+        return makeStringKey(name, FLAG_SMALLER_FONT);
+
+      default: return null;
     }
   }
 
@@ -751,5 +797,32 @@ public final class KeyValue implements Comparable<KeyValue>
 
     @Override
     public String toString() { return symbol; }
+  };
+
+  public static final class Macro implements Comparable<Macro>
+  {
+    public final KeyValue[] keys;
+    private final String _symbol;
+
+    public Macro(KeyValue[] keys_, String sym_)
+    {
+      keys = keys_;
+      _symbol = sym_;
+    }
+
+    public String toString() { return _symbol; }
+
+    @Override
+    public int compareTo(Macro snd)
+    {
+      int d = keys.length - snd.keys.length;
+      if (d != 0) return d;
+      for (int i = 0; i < keys.length; i++)
+      {
+        d = keys[i].compareTo(snd.keys[i]);
+        if (d != 0) return d;
+      }
+      return _symbol.compareTo(snd._symbol);
+    }
   };
 }

@@ -711,6 +711,8 @@ public final class KeyValue implements Comparable<KeyValue>
       case "removed": return placeholderKey(Placeholder.REMOVED);
       case "f11_placeholder": return placeholderKey(Placeholder.F11);
       case "f12_placeholder": return placeholderKey(Placeholder.F12);
+
+      default: return null;
     }
   }
 

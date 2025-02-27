@@ -15,7 +15,7 @@ android {
     minSdk 21
     targetSdkVersion 35
     versionCode 48
-    versionName "1.30.6"
+    versionName "1.30.7"
   }
 
   sourceSets {

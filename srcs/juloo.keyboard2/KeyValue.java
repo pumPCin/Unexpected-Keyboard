@@ -59,6 +59,7 @@ public final class KeyValue implements Comparable<KeyValue>
     BREVE,
     BAR,
     FN,
+    SELECTION_MODE,
   } // Last is be applied first
 
   public static enum Editing
@@ -77,6 +78,7 @@ public final class KeyValue implements Comparable<KeyValue>
     AUTOFILL,
     DELETE_WORD,
     FORWARD_DELETE_WORD,
+    SELECTION_CANCEL,
   }
 
   public static enum Placeholder
@@ -715,6 +717,9 @@ public final class KeyValue implements Comparable<KeyValue>
       case "cursor_right": return sliderKey(Slider.Cursor_right, 1);
       case "cursor_up": return sliderKey(Slider.Cursor_up, 1);
       case "cursor_down": return sliderKey(Slider.Cursor_down, 1);
+      case "selection_cancel": return editingKey("Esc", Editing.SELECTION_CANCEL, FLAG_SMALLER_FONT);
+      case "selection_cursor_left": return sliderKey(Slider.Selection_cursor_left, -1); // Move the left side of the selection
+      case "selection_cursor_right": return sliderKey(Slider.Selection_cursor_right, 1);
       // These keys are not used
       case "replaceText": return editingKey("repl", Editing.REPLACE);
       case "textAssist": return editingKey(0xE038, Editing.ASSIST);
@@ -728,6 +733,44 @@ public final class KeyValue implements Comparable<KeyValue>
       case "removed": return placeholderKey(Placeholder.REMOVED);
       case "f11_placeholder": return placeholderKey(Placeholder.F11);
       case "f12_placeholder": return placeholderKey(Placeholder.F12);
+
+      /* Korean Hangul */
+      case "ㄱ": return makeHangulInitial("ㄱ", 0);
+      case "ㄲ": return makeHangulInitial("ㄲ", 1);
+      case "ㄴ": return makeHangulInitial("ㄴ", 2);
+      case "ㄷ": return makeHangulInitial("ㄷ", 3);
+      case "ㄸ": return makeHangulInitial("ㄸ", 4);
+      case "ㄹ": return makeHangulInitial("ㄹ", 5);
+      case "ㅁ": return makeHangulInitial("ㅁ", 6);
+      case "ㅂ": return makeHangulInitial("ㅂ", 7);
+      case "ㅃ": return makeHangulInitial("ㅃ", 8);
+      case "ㅅ": return makeHangulInitial("ㅅ", 9);
+      case "ㅆ": return makeHangulInitial("ㅆ", 10);
+      case "ㅇ": return makeHangulInitial("ㅇ", 11);
+      case "ㅈ": return makeHangulInitial("ㅈ", 12);
+      case "ㅉ": return makeHangulInitial("ㅉ", 13);
+      case "ㅊ": return makeHangulInitial("ㅊ", 14);
+      case "ㅋ": return makeHangulInitial("ㅋ", 15);
+      case "ㅌ": return makeHangulInitial("ㅌ", 16);
+      case "ㅍ": return makeHangulInitial("ㅍ", 17);
+      case "ㅎ": return makeHangulInitial("ㅎ", 18);
+
+      /* Tamil letters should be smaller on the keyboard. */
+      case "ஔ": case "ந": case "ல": case "ழ": case "௯": case "க":
+      case "ஷ": case "ே": case "௨": case "ஜ": case "ங": case "ன":
+      case "௦": case "ை": case "ூ": case "ம": case "ஆ": case "௭":
+      case "௪": case "ா": case "ஶ": case "௬": case "வ": case "ஸ":
+      case "௮": case "ட": case "ப": case "ஈ": case "௩": case "ஒ":
+      case "ௌ": case "உ": case "௫": case "ய": case "ர": case "ு":
+      case "இ": case "ோ": case "ஓ": case "ஃ": case "ற": case "த":
+      case "௧": case "ண": case "ஏ": case "ஊ": case "ொ": case "ஞ":
+      case "அ": case "எ": case "ச": case "ெ": case "ஐ": case "ி":
+      case "௹": case "ள": case "ஹ": case "௰": case "ௐ": case "௱":
+      case "௲": case "௳":
+        return makeStringKey(name, FLAG_SMALLER_FONT);
+
+      /* Internal keys */
+      case "selection_mode": return makeInternalModifier(Modifier.SELECTION_MODE);
 
       default: return null;
     }
@@ -745,7 +788,9 @@ public final class KeyValue implements Comparable<KeyValue>
     Cursor_left(0xE008),
     Cursor_right(0xE006),
     Cursor_up(0xE005),
-    Cursor_down(0xE007);
+    Cursor_down(0xE007),
+    Selection_cursor_left(0xE008),
+    Selection_cursor_right(0xE006);
 
     final String symbol;
 

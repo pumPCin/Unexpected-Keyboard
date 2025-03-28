@@ -62,7 +62,6 @@
   // avoid showing these twice
   "€": "removed",
   "£": "removed",
-  "₽": "removed",
   // alternative greek letters
   "π": "ϖ",
   "θ": "ϑ",

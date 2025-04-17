@@ -13,10 +13,6 @@ public class SettingsActivity extends PreferenceActivity
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    // The preferences can't be read when in direct-boot mode. Avoid crashing
-    // and don't allow changing the settings.
-    // Run the config migration on this prefs as it might be different from the
-    // one used by the keyboard, which have been migrated.
     try
     {
       Config.migrate(getPreferenceManager().getSharedPreferences());
@@ -27,7 +23,6 @@ public class SettingsActivity extends PreferenceActivity
 
   void fallbackEncrypted()
   {
-    // Can't communicate with the user here.
     finish();
   }
 

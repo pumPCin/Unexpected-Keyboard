@@ -84,10 +84,13 @@ android {
     }
   }
 
-  // Name outputs after the application ID.
+import com.android.build.OutputFile
+
+  ext.versionCodes = ['arm64-v8a': 1, 'armeabi-v7a': 2]
   android.applicationVariants.all { variant ->
-    variant.outputs.all {
-      outputFileName = "${applicationId}.apk"
+    variant.outputs.each { output ->
+      int abiVersionCode = project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) ?: 0
+      output.versionCodeOverride = (abiVersionCode * 1000) + android.defaultConfig.versionCode
     }
   }
 

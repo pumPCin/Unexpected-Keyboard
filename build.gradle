@@ -80,17 +80,7 @@ android {
       enable true
       reset()
       include 'arm64-v8a', 'armeabi-v7a'
-      universalApk false
-    }
-  }
-
-import com.android.build.OutputFile
-
-  ext.versionCodes = ['arm64-v8a': 1, 'armeabi-v7a': 2]
-  android.applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-      int abiVersionCode = project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) ?: 0
-      output.versionCodeOverride = (abiVersionCode * 1000) + android.defaultConfig.versionCode
+      universalApk true
     }
   }
 
@@ -102,6 +92,15 @@ import com.android.build.OutputFile
   lintOptions {
     // Translation are already checked by 'syncTranslations'
     disable 'MissingTranslation'
+  }
+}
+
+import com.android.build.OutputFile
+ext.versionCodes = ['arm64-v8a': 1, 'armeabi-v7a': 2]
+android.applicationVariants.all { variant ->
+  variant.outputs.each { output ->
+  int abiVersionCode = project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) ?: 0
+  output.versionCodeOverride = (abiVersionCode * 1000) + android.defaultConfig.versionCode
   }
 }
 

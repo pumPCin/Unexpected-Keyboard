@@ -264,6 +264,6 @@ public final class ComposeKeyData
   public static final int accent_tilde = 1144;
   public static final int accent_trema = 1172;
   public static final int compose = 1270;
-  public static final int fn = 7439;
-  public static final int shift = 8118;
+  public static final int fn = 7447;
+  public static final int shift = 8126;
 }

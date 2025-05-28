@@ -413,25 +413,75 @@ public class Keyboard2View extends View
     canvas.restore();
   }
 
-  private int labelColor(KeyValue k, boolean isKeyDown, boolean sublabel)
+  public static int hsl(float hue, float saturation, float brightness) {
+    int r = 0, g = 0, b = 0;
+    if (saturation == 0) {
+        r = g = b = (int) (brightness * 255.0f + 0.5f);
+    } else {
+        float h = (hue - (float)Math.floor(hue)) * 6.0f;
+        float f = h - (float)java.lang.Math.floor(h);
+        float p = brightness * (1.0f - saturation);
+        float q = brightness * (1.0f - saturation * f);
+        float t = brightness * (1.0f - (saturation * (1.0f - f)));
+        switch ((int) h) {
+        case 0:
+            r = (int) (brightness * 255.0f + 0.5f);
+            g = (int) (t * 255.0f + 0.5f);
+            b = (int) (p * 255.0f + 0.5f);
+            break;
+        case 1:
+            r = (int) (q * 255.0f + 0.5f);
+            g = (int) (brightness * 255.0f + 0.5f);
+            b = (int) (p * 255.0f + 0.5f);
+            break;
+        case 2:
+            r = (int) (p * 255.0f + 0.5f);
+            g = (int) (brightness * 255.0f + 0.5f);
+            b = (int) (t * 255.0f + 0.5f);
+            break;
+        case 3:
+            r = (int) (p * 255.0f + 0.5f);
+            g = (int) (q * 255.0f + 0.5f);
+            b = (int) (brightness * 255.0f + 0.5f);
+            break;
+        case 4:
+            r = (int) (t * 255.0f + 0.5f);
+            g = (int) (p * 255.0f + 0.5f);
+            b = (int) (brightness * 255.0f + 0.5f);
+            break;
+        case 5:
+            r = (int) (brightness * 255.0f + 0.5f);
+            g = (int) (p * 255.0f + 0.5f);
+            b = (int) (q * 255.0f + 0.5f);
+            break;
+        }
+    }
+    return 0x00000000 | (r << 16) | (g << 8) | (b << 0);
+  }
+
+  private static int hslFromIndex(int index, float saturation, float lightness) {
+    if (index == 2) return hsl(0.00f, saturation, lightness);
+    if (index == 6) return hsl(0.08f, saturation, lightness);
+    if (index == 4) return hsl(0.16f, saturation, lightness);
+    if (index == 8) return hsl(0.25f, saturation, lightness);
+    if (index == 3) return hsl(0.33f, saturation, lightness);
+    if (index == 5) return hsl(0.47f, saturation, lightness);
+    if (index == 1) return hsl(0.60f, saturation, lightness);
+    if (index == 7) return hsl(0.83f, saturation, lightness);
+    return hsl(0f, 0f, lightness);
+  }
+
+  private int labelColor(KeyValue k, boolean isKeyDown, boolean sublabel, int index)
   {
     if (isKeyDown)
     {
       int flags = _pointers.getKeyFlags(k);
-      if (flags != -1)
-      {
-        if ((flags & Pointers.FLAG_P_LOCKED) != 0)
-          return _theme.lockedColor;
-        return _theme.activatedColor;
-      }
+      if (flags != -1 && (flags & Pointers.FLAG_P_LOCKED) != 0)
+        return hslFromIndex(index, 0.75f, 1);
+      return hslFromIndex(index, 0.75f, .50f);
     }
-    if (k.hasFlagsAny(KeyValue.FLAG_SECONDARY | KeyValue.FLAG_GREYED))
-    {
-      if (k.hasFlagsAny(KeyValue.FLAG_GREYED))
-        return _theme.greyedLabelColor;
-      return _theme.secondaryLabelColor;
-    }
-    return sublabel ? _theme.subLabelColor : _theme.labelColor;
+    if (index == 0) return hslFromIndex(0, 0, 1);
+    return hslFromIndex(index, .75f, .85f);
   }
 
   private void drawLabel(Canvas canvas, KeyValue kv, float x, float y,
@@ -441,7 +491,7 @@ public class Keyboard2View extends View
     if (kv == null)
       return;
     float textSize = scaleTextSize(kv, _config.labelTextSize, keyH);
-    Paint p = tc.label_paint(kv.hasFlagsAny(KeyValue.FLAG_KEY_FONT), labelColor(kv, isKeyDown, false), textSize);
+    Paint p = tc.label_paint(kv.hasFlagsAny(KeyValue.FLAG_KEY_FONT), labelColor(kv, isKeyDown, false, 0), textSize);
     canvas.drawText(kv.getString(), x, (keyH - p.ascent() - p.descent()) / 2f + y, p);
   }
 
@@ -455,7 +505,7 @@ public class Keyboard2View extends View
     if (kv == null)
       return;
     float textSize = scaleTextSize(kv, _config.sublabelTextSize, keyH);
-    Paint p = tc.sublabel_paint(kv.hasFlagsAny(KeyValue.FLAG_KEY_FONT), labelColor(kv, isKeyDown, true), textSize, a);
+    Paint p = tc.sublabel_paint(kv.hasFlagsAny(KeyValue.FLAG_KEY_FONT), labelColor(kv, isKeyDown, true, sub_index), textSize, a);
     float subPadding = _config.keyPadding;
     if (v == Vertical.CENTER)
       y += (keyH - p.ascent() - p.descent()) / 2f;

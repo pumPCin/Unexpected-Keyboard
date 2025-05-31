@@ -41,7 +41,8 @@ public final class Config
   public long longPressInterval;
   public boolean keyrepeat_enabled;
   public float margin_bottom;
-  public float keyHeight;
+  public int keyboardHeightPercent;
+  public int screenHeightPixels;
   public float horizontal_margin;
   public float key_vertical_margin;
   public float key_horizontal_margin;
@@ -104,9 +105,7 @@ public final class Config
   {
     DisplayMetrics dm = res.getDisplayMetrics();
     orientation_landscape = res.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-    // The height of the keyboard is relative to the height of the screen.
-    // This is the height of the keyboard if it have 4 rows.
-    int keyboardHeightPercent;
+
     float characterSizeScale = 1.f;
     String show_numpad_s = _prefs.getString("show_numpad", "never");
     show_numpad = "always".equals(show_numpad_s);
@@ -153,9 +152,7 @@ public final class Config
     borderConfig = _prefs.getBoolean("border_config", false);
     customBorderRadius = _prefs.getInt("custom_border_radius", 0) / 100.f;
     customBorderLineWidth = get_dip_pref(dm, "custom_border_line_width", 0);
-    // Do not substract key_vertical_margin from keyHeight because this is done
-    // during rendering.
-    keyHeight = dm.heightPixels * keyboardHeightPercent / 100 / 4;
+    screenHeightPixels = dm.heightPixels;
     horizontal_margin =
       get_dip_pref_oriented(dm, "horizontal_margin", 3, 28);
     double_tap_lock_shift = _prefs.getBoolean("lock_double_tap", false);

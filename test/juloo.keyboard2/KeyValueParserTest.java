@@ -134,6 +134,7 @@ public class KeyValueParserTest
     Utils.parse(":char:b", KeyValue.makeCharKey('b', "b", 0));
   }
 
+  /** JUnit removes these functions from stacktraces. */
   static class Utils
   {
     static void parse(String key_descr, KeyValue ref) throws Exception

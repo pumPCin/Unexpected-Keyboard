@@ -4,6 +4,8 @@ import com.android.ide.common.vectordrawable.Svg2Vector;
 import java.io.File;
 import java.io.FileOutputStream;
 
+/** Inspired from Bernard Ladenthin's answer:
+    https://stackoverflow.com/a/78898372 */
 public class SvgToVector
 {
   public static void main(String[] args)

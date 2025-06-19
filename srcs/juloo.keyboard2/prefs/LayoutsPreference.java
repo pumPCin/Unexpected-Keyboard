@@ -194,10 +194,7 @@ public class LayoutsPreference extends ListGroupPreference<LayoutsPreference.Lay
               KeyboardData.load_string_exn(text);
               return null; // Validation passed
             }
-            catch (Exception e)
-            {
-              return e.getMessage();
-            }
+            catch (Exception ignored) {}
           }
         });
   }

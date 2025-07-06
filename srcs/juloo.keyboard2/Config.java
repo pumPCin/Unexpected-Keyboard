@@ -164,13 +164,11 @@ public final class Config
     switch_input_immediate = _prefs.getBoolean("switch_input_immediate", false);
     extra_keys_param = ExtraKeysPreference.get_extra_keys(_prefs);
     extra_keys_custom = CustomExtraKeysPreference.get(_prefs);
-    selected_number_layout = NumberLayout.valueOf(_prefs.getString("number_entry_layout",  "pin").toUpperCase());
+    selected_number_layout = NumberLayout.of_string(_prefs.getString("number_entry_layout", "pin"));
     current_layout_portrait = _prefs.getInt("current_layout_portrait", 0);
     current_layout_landscape = _prefs.getInt("current_layout_landscape", 0);
     circle_sensitivity = Integer.valueOf(_prefs.getString("circle_sensitivity", "2"));
     clipboard_history_enabled = _prefs.getBoolean("clipboard_history_enabled", false);
-    bottomInsetMin = Utils.is_navigation_bar_gestural(res) ?
-      (int)res.getDimension(R.dimen.bottom_inset_min) : 0;
   }
 
   public int get_current_layout()

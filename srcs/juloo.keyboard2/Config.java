@@ -14,6 +14,15 @@ import juloo.keyboard2.prefs.LayoutsPreference;
 
 public final class Config
 {
+  /**
+   * Width of the Android phones is around 300-600dp in portrait, 600-1400dp in landscape,
+   * depending on the user's size settings.
+   *
+   * 600 dp seems a reasonable midpoint to determine whether the current orientation of the device is "wide"
+   * (landsacpe, tablet, unfolded foldable etc.) or not, to switch to a different layout.
+   */
+  public static final int WIDE_DEVICE_THRESHOLD = 600;
+
   private final SharedPreferences _prefs;
 
   // From resources
@@ -73,11 +82,11 @@ public final class Config
 
   public final IKeyEventHandler handler;
   public boolean orientation_landscape = false;
+  public boolean wide_screen = false;
   /** Index in 'layouts' of the currently used layout. See
       [get_current_layout()] and [set_current_layout()]. */
-  int current_layout_portrait;
-  int current_layout_landscape;
-  public int bottomInsetMin;
+  int current_layout_narrow;
+  int current_layout_wide;
 
   private Config(SharedPreferences prefs, Resources res, IKeyEventHandler h)
   {
@@ -165,27 +174,30 @@ public final class Config
     extra_keys_param = ExtraKeysPreference.get_extra_keys(_prefs);
     extra_keys_custom = CustomExtraKeysPreference.get(_prefs);
     selected_number_layout = NumberLayout.of_string(_prefs.getString("number_entry_layout", "pin"));
-    current_layout_portrait = _prefs.getInt("current_layout_portrait", 0);
-    current_layout_landscape = _prefs.getInt("current_layout_landscape", 0);
+    current_layout_narrow = _prefs.getInt("current_layout_portrait", 0);
+    current_layout_wide = _prefs.getInt("current_layout_landscape", 0);
     circle_sensitivity = Integer.valueOf(_prefs.getString("circle_sensitivity", "2"));
     clipboard_history_enabled = _prefs.getBoolean("clipboard_history_enabled", false);
+
+    float screen_width_dp = dm.widthPixels / dm.density;
+    wide_screen = screen_width_dp >= WIDE_DEVICE_THRESHOLD;
   }
 
   public int get_current_layout()
   {
-    return (orientation_landscape)
-      ? current_layout_landscape : current_layout_portrait;
+    return (wide_screen)
+      ? current_layout_wide : current_layout_narrow;
   }
 
   public void set_current_layout(int l)
   {
-    if (orientation_landscape)
-      current_layout_landscape = l;
+    if (wide_screen)
+      current_layout_wide = l;
     else
-      current_layout_portrait = l;
+      current_layout_narrow = l;
     SharedPreferences.Editor e = _prefs.edit();
-    e.putInt("current_layout_portrait", current_layout_portrait);
-    e.putInt("current_layout_landscape", current_layout_landscape);
+    e.putInt("current_layout_portrait", current_layout_narrow);
+    e.putInt("current_layout_landscape", current_layout_wide);
     e.apply();
   }
 

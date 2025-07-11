@@ -186,7 +186,7 @@ public final class Config
   public int get_current_layout()
   {
     return (wide_screen)
-      ? current_layout_wide : current_layout_narrow;
+            ? current_layout_wide : current_layout_narrow;
   }
 
   public void set_current_layout(int l)
@@ -195,6 +195,7 @@ public final class Config
       current_layout_wide = l;
     else
       current_layout_narrow = l;
+
     SharedPreferences.Editor e = _prefs.edit();
     e.putInt("current_layout_portrait", current_layout_narrow);
     e.putInt("current_layout_landscape", current_layout_wide);

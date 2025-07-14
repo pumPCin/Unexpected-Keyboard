@@ -82,6 +82,7 @@ public final class Config
 
   public final IKeyEventHandler handler;
   public boolean orientation_landscape = false;
+
   public boolean wide_screen = false;
   /** Index in 'layouts' of the currently used layout. See
       [get_current_layout()] and [set_current_layout()]. */
@@ -114,6 +115,7 @@ public final class Config
   {
     DisplayMetrics dm = res.getDisplayMetrics();
     orientation_landscape = res.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
 
     float characterSizeScale = 1.f;
     String show_numpad_s = _prefs.getString("show_numpad", "never");
@@ -288,6 +290,7 @@ public final class Config
   public static void migrate(SharedPreferences prefs)
   {
     int saved_version = prefs.getInt("version", 0);
+
     if (saved_version == CONFIG_VERSION)
       return;
     SharedPreferences.Editor e = prefs.edit();

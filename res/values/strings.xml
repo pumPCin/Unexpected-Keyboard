@@ -102,7 +102,7 @@
     <string name="launcher_sourcecode">This is a free and open source application. You can find the source code or report bugs on GitHub.</string>
     <string name="launcher_tryhere">After enabling, you can try the keyboard here:</string>
     <string name="launcher_tryhere_hint">Try here</string>
-    <string name="key_descr_capslock">Caps lock</string>
+    <string name="key_descr_capslock">CapsLock</string>
     <string name="key_descr_compose">Compose</string>
     <string name="key_descr_switch_greekmath">Greek &amp; math symbols</string>
     <string name="key_descr_change_method">Switch keyboard</string>
@@ -118,8 +118,8 @@
     <string name="key_descr_º">Ordinal Indicator</string>
     <string name="key_descr_superscript">Superscript</string>
     <string name="key_descr_subscript">Subscript</string>
-    <string name="key_descr_page_up">Page Up</string>
-    <string name="key_descr_page_down">Page Down</string>
+    <string name="key_descr_page_up">PageUp</string>
+    <string name="key_descr_page_down">PageDown</string>
     <string name="key_descr_home">Home</string>
     <string name="key_descr_end">End</string>
     <string name="key_descr_clipboard">Clipboard manager</string>

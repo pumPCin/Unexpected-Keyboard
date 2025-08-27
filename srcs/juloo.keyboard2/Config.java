@@ -234,22 +234,17 @@ public final class Config
     int night_mode = res.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
     switch (theme_name)
     {
+      case "white": return R.style.White;
       case "light": return R.style.Light;
+      case "dark": return R.style.Dark;
       case "black": return R.style.Black;
       case "altblack": return R.style.AltBlack;
-      case "dark": return R.style.Dark;
-      case "white": return R.style.White;
-      case "epaper": return R.style.ePaper;
-      case "desert": return R.style.Desert;
-      case "jungle": return R.style.Jungle;
       case "monetlight": return R.style.MonetLight;
       case "monetdark": return R.style.MonetDark;
       case "monet":
         if ((night_mode & Configuration.UI_MODE_NIGHT_NO) != 0)
           return R.style.MonetLight;
         return R.style.MonetDark;
-      case "rosepine": return R.style.RosePine;
-      case "everforestlight": return R.style.EverforestLight;
       default:
       case "system":
         if ((night_mode & Configuration.UI_MODE_NIGHT_NO) != 0)

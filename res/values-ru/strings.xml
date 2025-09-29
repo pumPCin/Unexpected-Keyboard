@@ -133,4 +133,10 @@
     <string name="clipboard_remove_confirm">Удалить этот буфер обмена?</string>
     <string name="clipboard_remove_confirmed">Да</string>
     <string name="toast_no_voice_input">Приложение для голосового ввода не установлено</string>
+    <string name="pref_category_clipboard">Буфер обмена</string>
+    <string name="pref_clipboard_history_duration">Запоминать в буфере обмена</string>
+    <string name="pref_clipboard_history_duration_1">До 1 минуты</string>
+    <string name="pref_clipboard_history_duration_5">До 5 минут</string>
+    <string name="pref_clipboard_history_duration_30">До 30 минут</string>
+    <string name="pref_clipboard_history_duration_stop">До закрытия приложения</string>
 </resources>

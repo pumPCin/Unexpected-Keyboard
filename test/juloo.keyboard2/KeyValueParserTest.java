@@ -148,7 +148,7 @@ public class KeyValueParserTest
       {
         fail("Expected failure but got " + KeyValueParser.parse(key_descr));
       }
-      catch (KeyValueParser.ParseError e) {}
+      catch (KeyValueParser.ParseError ignored) {}
     }
   }
 }

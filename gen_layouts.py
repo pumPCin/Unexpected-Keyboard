@@ -9,7 +9,7 @@ import xml.etree.ElementTree as XML
 
 # Layouts first in the list (these are the programming layouts). Other layouts
 # are sorted alphabetically.
-FIRST_LAYOUTS = [ "latn_qwerty_us", "latn_colemak", "latn_dvorak" ]
+FIRST_LAYOUTS = [ "latn_qwerty_us" ]
 
 # Read a layout from a file. Returns [None] if [fname] is not a layout.
 def read_layout(fname):

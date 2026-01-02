@@ -344,6 +344,8 @@ public class Keyboard2View extends View
   @Override
   protected void onDraw(Canvas canvas)
   {
+    // Set keyboard background opacity
+    getBackground().setAlpha(_config.keyboardOpacity);
     float y = _tc.margin_top;
     for (KeyboardData.Row row : _keyboard.rows)
     {

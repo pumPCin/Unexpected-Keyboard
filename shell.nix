@@ -4,13 +4,13 @@
 } }:
 
 let
-  jdk = pkgs.openjdk17;
-  build_tools_version = "35.0.0";
+  jdk = pkgs.openjdk21;
+  build_tools_version = "36.0.0";
 
   android = pkgs.androidenv.composeAndroidPackages {
     buildToolsVersions = [ build_tools_version ];
     platformVersions = [ "35" ];
-    abiVersions = [ "armeabi-v7a" ];
+    abiVersions = [ "arm64-v8a" ];
   };
 
   emulators = let

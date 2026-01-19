@@ -12,13 +12,10 @@ import java.util.Iterator;
 
 public final class KeyEventHandler
   implements Config.IKeyEventHandler,
-             ClipboardHistoryService.ClipboardPasteCallback,
-             CurrentlyTypedWord.Callback
+             ClipboardHistoryService.ClipboardPasteCallback
 {
   IReceiver _recv;
   Autocapitalisation _autocap;
-  Suggestions _suggestions;
-  CurrentlyTypedWord _typedword;
   /** State of the system modifiers. It is updated whether a modifier is down
       or up and a corresponding key event is sent. */
   Pointers.Modifiers _mods;
@@ -37,8 +34,6 @@ public final class KeyEventHandler
     _autocap = new Autocapitalisation(handler,
         this.new Autocapitalisation_callback());
     _mods = Pointers.Modifiers.EMPTY;
-    _suggestions = new Suggestions(recv);
-    _typedword = new CurrentlyTypedWord(handler, this);
   }
 
   /** Editing just started. */
@@ -46,7 +41,6 @@ public final class KeyEventHandler
   {
     InputConnection ic = _recv.getCurrentInputConnection();
     _autocap.started(conf, ic);
-    _typedword.started(conf, ic);
     _move_cursor_force_fallback =
       conf.editor_config.should_move_cursor_force_fallback;
   }
@@ -55,7 +49,6 @@ public final class KeyEventHandler
   public void selection_updated(int oldSelStart, int newSelStart, int newSelEnd)
   {
     _autocap.selection_updated(oldSelStart, newSelStart);
-    _typedword.selection_updated(oldSelStart, newSelStart, newSelEnd);
   }
 
   /** A key is being pressed. There will not necessarily be a corresponding
@@ -120,21 +113,9 @@ public final class KeyEventHandler
   }
 
   @Override
-  public void suggestion_entered(String text)
-  {
-    replace_text_before_cursor(_typedword.get().length(), text + " ");
-  }
-
-  @Override
   public void paste_from_clipboard_pane(String content)
   {
     send_text(content);
-  }
-
-  @Override
-  public void currently_typed_word(String word)
-  {
-    _suggestions.currently_typed_word(word);
   }
 
   /** Update [_mods] to be consistent with the [mods], sending key events if
@@ -225,7 +206,6 @@ public final class KeyEventHandler
     if (eventAction == KeyEvent.ACTION_UP)
     {
       _autocap.event_sent(eventCode, metaState);
-      _typedword.event_sent(eventCode, metaState);
     }
   }
 
@@ -235,7 +215,6 @@ public final class KeyEventHandler
     if (conn == null)
       return;
     _autocap.typed(text);
-    _typedword.typed(text);
     conn.commitText(text, 1);
   }
 
@@ -503,7 +482,7 @@ public final class KeyEventHandler
     return (conn.getSelectedText(0) != null);
   }
 
-  public static interface IReceiver extends Suggestions.Callback
+  public static interface IReceiver
   {
     public void handle_event_key(KeyValue.Event ev);
     public void set_shift_state(boolean state, boolean lock);

@@ -280,12 +280,12 @@ public final class ComposeKeyData
   public static final int accent_trema = 1295;
   public static final int compose = 1393;
   public static final int fn = 7821;
-  public static final int numpad_bengali = 8417;
+/*public static final int numpad_bengali = 8417;
   public static final int numpad_devanagari = 8438;
   public static final int numpad_gujarati = 8459;
   public static final int numpad_hindu = 8480;
   public static final int numpad_kannada = 8501;
   public static final int numpad_persian = 8522;
   public static final int numpad_tamil = 8543;
-  public static final int shift = 8564;
+*/public static final int shift = 8564;
 }

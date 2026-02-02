@@ -121,19 +121,7 @@ public final class KeyModifier
   /** Return the compose state that modifies the numpad script. */
   public static int modify_numpad_script(String numpad_script)
   {
-    if (numpad_script == null)
-      return -1;
-    switch (numpad_script)
-    {
-      case "hindu-arabic": return ComposeKeyData.numpad_hindu;
-      case "bengali": return ComposeKeyData.numpad_bengali;
-      case "devanagari": return ComposeKeyData.numpad_devanagari;
-      case "persian": return ComposeKeyData.numpad_persian;
-      case "gujarati": return ComposeKeyData.numpad_gujarati;
-      case "kannada": return ComposeKeyData.numpad_kannada;
-      case "tamil": return ComposeKeyData.numpad_tamil;
-      default: return -1;
-    }
+    return -1;
   }
 
   /** Keys that do not match any sequence are greyed. */

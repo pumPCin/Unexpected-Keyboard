@@ -50,7 +50,7 @@ public final class Config
   public long longPressInterval;
   public boolean keyrepeat_enabled;
   public float margin_bottom;
-  public int keyboardHeightPercent;
+  public int keyboard_rows_height_pixels;
   public int screenHeightPixels;
   public float horizontal_margin;
   public float key_vertical_margin;
@@ -80,7 +80,7 @@ public final class Config
   public Map<KeyValue, KeyboardData.PreferredPos> extra_keys_param;
   public Map<KeyValue, KeyboardData.PreferredPos> extra_keys_custom;
 
-  public final IKeyEventHandler handler;
+  public IKeyEventHandler handler;
   public boolean orientation_landscape = false;
 
   public boolean wide_screen = false;
@@ -89,7 +89,7 @@ public final class Config
   int current_layout_narrow;
   int current_layout_wide;
 
-  private Config(SharedPreferences prefs, Resources res, IKeyEventHandler h)
+  private Config(SharedPreferences prefs, Resources res)
   {
     _prefs = prefs;
     editor_config = new EditorConfig();
@@ -103,7 +103,6 @@ public final class Config
     // initialized later
     shouldOfferVoiceTyping = false;
     extra_keys_subtype = null;
-    handler = h;
   }
 
   /*
@@ -118,6 +117,7 @@ public final class Config
     float characterSizeScale = 1.f;
     String show_numpad_s = _prefs.getString("show_numpad", "never");
     show_numpad = "always".equals(show_numpad_s);
+    int keyboardHeightPercent;
     if (orientation_landscape)
     {
       if ("landscape".equals(show_numpad_s))
@@ -163,6 +163,12 @@ public final class Config
     customBorderRadius = _prefs.getInt("custom_border_radius", 0) / 100.f;
     customBorderLineWidth = get_dip_pref(dm, "custom_border_line_width", 0);
     screenHeightPixels = dm.heightPixels;
+    // Rows height is proportional to the screen height, meaning it doesn't
+    // change for layouts with more or less rows. 3.95 is the usual height of
+    // a layout in KeyboardData unit. The keyboard will be higher if the layout
+    // has more rows and smaller if it has less because rows stay the same
+    // height.
+    keyboard_rows_height_pixels = screenHeightPixels * keyboardHeightPercent / 395;
     horizontal_margin =
       get_dip_pref_oriented(dm, "horizontal_margin", 3, 28);
     double_tap_lock_shift = _prefs.getBoolean("lock_double_tap", false);
@@ -266,11 +272,10 @@ public final class Config
 
   private static Config _globalConfig = null;
 
-  public static void initGlobalConfig(SharedPreferences prefs, Resources res,
-      IKeyEventHandler handler)
+  public static void initGlobalConfig(SharedPreferences prefs, Resources res)
   {
     migrate(prefs);
-    _globalConfig = new Config(prefs, res, handler);
+    _globalConfig = new Config(prefs, res);
     LayoutModifier.init(_globalConfig, res);
   }
 

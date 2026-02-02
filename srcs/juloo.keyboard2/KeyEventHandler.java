@@ -1,8 +1,8 @@
 package juloo.keyboard2;
 
 import android.annotation.SuppressLint;
-import android.os.Looper;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.inputmethod.ExtractedText;

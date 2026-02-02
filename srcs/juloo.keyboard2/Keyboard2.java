@@ -109,11 +109,10 @@ public class Keyboard2 extends InputMethodService
     super.onCreate();
     SharedPreferences prefs = DirectBootAwarePreferences.get_shared_preferences(this);
     _handler = new Handler(getMainLooper());
-    Config.initGlobalConfig(prefs, getResources());
-    _config = Config.globalConfig();
-    _keyeventhandler = new KeyEventHandler(this.new Receiver(), _config);
-    _config.handler = _keyeventhandler;
+    _keyeventhandler = new KeyEventHandler(this.new Receiver());
+    Config.initGlobalConfig(prefs, getResources(), _keyeventhandler);
     prefs.registerOnSharedPreferenceChangeListener(this);
+    _config = Config.globalConfig();
     refreshSubtypeImm();
     create_keyboard_view();
     ClipboardHistoryService.on_startup(this, _keyeventhandler);
@@ -302,13 +301,6 @@ public class Keyboard2 extends InputMethodService
     return false;
   }
 
-  void start_activity(Class cls)
-  {
-    Intent intent = new Intent(this, cls);
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
-
   /** Not static */
   public class Receiver implements KeyEventHandler.IReceiver
   {
@@ -317,7 +309,9 @@ public class Keyboard2 extends InputMethodService
       switch (ev)
       {
         case CONFIG:
-          start_activity(SettingsActivity.class);
+          Intent intent = new Intent(Keyboard2.this, SettingsActivity.class);
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
           break;
 
         case SWITCH_TEXT:

@@ -8,8 +8,6 @@ import android.util.TypedValue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import juloo.cdict.Cdict;
-import juloo.keyboard2.dict.Dictionaries;
 import juloo.keyboard2.prefs.CustomExtraKeysPreference;
 import juloo.keyboard2.prefs.ExtraKeysPreference;
 import juloo.keyboard2.prefs.LayoutsPreference;
@@ -44,7 +42,6 @@ public final class Config
   public boolean number_row_symbols;
   public float swipe_dist_px;
   public float slide_step_px;
-  public boolean suggestions_enabled;
   // Let the system handle vibration when false.
   public boolean vibrate_custom;
   // Control the vibration if [vibrate_custom] is true.
@@ -82,18 +79,17 @@ public final class Config
   public ExtraKeys extra_keys_subtype;
   public Map<KeyValue, KeyboardData.PreferredPos> extra_keys_param;
   public Map<KeyValue, KeyboardData.PreferredPos> extra_keys_custom;
-  public Cdict current_dictionary = null; // Might be 'null'.
+
   public IKeyEventHandler handler;
   public boolean orientation_landscape = false;
-  public boolean foldable_unfolded = false;
+
   public boolean wide_screen = false;
   /** Index in 'layouts' of the currently used layout. See
       [get_current_layout()] and [set_current_layout()]. */
   int current_layout_narrow;
   int current_layout_wide;
 
-  private Config(SharedPreferences prefs, Resources res,
-      Boolean foldableUnfolded, Dictionaries dicts)
+  private Config(SharedPreferences prefs, Resources res)
   {
     _prefs = prefs;
     editor_config = new EditorConfig();
@@ -103,7 +99,7 @@ public final class Config
     labelTextSize = 0.33f;
     sublabelTextSize = 0.22f;
     // from prefs
-    refresh(res, foldableUnfolded, dicts);
+    refresh(res);
     // initialized later
     shouldOfferVoiceTyping = false;
     extra_keys_subtype = null;
@@ -112,11 +108,11 @@ public final class Config
   /*
    ** Reload prefs
    */
-  public void refresh(Resources res, Boolean foldableUnfolded, Dictionaries dicts)
+  public void refresh(Resources res)
   {
     DisplayMetrics dm = res.getDisplayMetrics();
     orientation_landscape = res.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-    foldable_unfolded = foldableUnfolded;
+
 
     float characterSizeScale = 1.f;
     String show_numpad_s = _prefs.getString("show_numpad", "never");
@@ -126,19 +122,18 @@ public final class Config
     {
       if ("landscape".equals(show_numpad_s))
         show_numpad = true;
-      keyboardHeightPercent = _prefs.getInt(foldable_unfolded ? "keyboard_height_landscape_unfolded" : "keyboard_height_landscape", 50);
+      keyboardHeightPercent = _prefs.getInt("keyboard_height_landscape", 50);
       characterSizeScale = 1.25f;
     }
     else
     {
-      keyboardHeightPercent = _prefs.getInt(foldable_unfolded ? "keyboard_height_unfolded" : "keyboard_height", 35);
+      keyboardHeightPercent = _prefs.getInt("keyboard_height", 35);
     }
     layouts = LayoutsPreference.load_from_preferences(res, _prefs);
     inverse_numpad = _prefs.getString("numpad_layout", "default").equals("low_first");
     String number_row = _prefs.getString("number_row", "no_number_row");
     add_number_row = !number_row.equals("no_number_row");
     number_row_symbols = number_row.equals("symbols");
-    suggestions_enabled = _prefs.getBoolean("suggestions", true);
     // The baseline for the swipe distance correspond to approximately the
     // width of a key in portrait mode, as most layouts have 10 columns.
     // Multipled by the DPI ratio because most swipes are made in the diagonals.
@@ -225,7 +220,7 @@ public final class Config
   {
     float value;
     try { value = _prefs.getInt(pref_name, -1); }
-    catch (Exception e) { value = _prefs.getFloat(pref_name, -1f); }
+    catch (Exception ignored) { value = _prefs.getFloat(pref_name, -1f); }
     if (value < 0f)
       value = def;
     return (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, dm));
@@ -234,13 +229,7 @@ public final class Config
   /** [get_dip_pref] depending on orientation. */
   float get_dip_pref_oriented(DisplayMetrics dm, String pref_base_name, float def_port, float def_land)
   {
-    final String suffix;
-    if (foldable_unfolded) {
-      suffix = orientation_landscape ? "_landscape_unfolded" : "_portrait_unfolded";
-    } else {
-      suffix = orientation_landscape ? "_landscape" : "_portrait";
-    }
-
+    String suffix = orientation_landscape ? "_landscape" : "_portrait";
     float def = orientation_landscape ? def_land : def_port;
     return get_dip_pref(dm, pref_base_name + suffix, def);
   }
@@ -250,24 +239,17 @@ public final class Config
     int night_mode = res.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
     switch (theme_name)
     {
+      case "white": return R.style.White;
       case "light": return R.style.Light;
+      case "dark": return R.style.Dark;
       case "black": return R.style.Black;
       case "altblack": return R.style.AltBlack;
-      case "dark": return R.style.Dark;
-      case "white": return R.style.White;
-      case "epaper": return R.style.ePaper;
-      case "desert": return R.style.Desert;
-      case "jungle": return R.style.Jungle;
       case "monetlight": return R.style.MonetLight;
       case "monetdark": return R.style.MonetDark;
       case "monet":
         if ((night_mode & Configuration.UI_MODE_NIGHT_NO) != 0)
           return R.style.MonetLight;
         return R.style.MonetDark;
-      case "rosepine": return R.style.RosePine;
-      case "everforestlight": return R.style.EverforestLight;
-      case "cobalt": return R.style.Cobalt;
-      case "pine": return R.style.Pine;
       case "epaperblack": return R.style.ePaperBlack;
       default:
       case "system":
@@ -290,11 +272,10 @@ public final class Config
 
   private static Config _globalConfig = null;
 
-  public static void initGlobalConfig(SharedPreferences prefs, Resources res,
-      Boolean foldableUnfolded, Dictionaries dicts)
+  public static void initGlobalConfig(SharedPreferences prefs, Resources res)
   {
     migrate(prefs);
-    _globalConfig = new Config(prefs, res, foldableUnfolded, dicts);
+    _globalConfig = new Config(prefs, res);
     LayoutModifier.init(_globalConfig, res);
   }
 
@@ -313,7 +294,6 @@ public final class Config
     public void key_down(KeyValue value, boolean is_swipe);
     public void key_up(KeyValue value, Pointers.Modifiers mods);
     public void mods_changed(Pointers.Modifiers mods);
-    public void suggestion_entered(String text);
   }
 
   /** Config migrations. */
@@ -323,7 +303,7 @@ public final class Config
   public static void migrate(SharedPreferences prefs)
   {
     int saved_version = prefs.getInt("version", 0);
-    Logs.debug_config_migration(saved_version, CONFIG_VERSION);
+
     if (saved_version == CONFIG_VERSION)
       return;
     SharedPreferences.Editor e = prefs.edit();

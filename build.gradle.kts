@@ -2,44 +2,36 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.io.FileOutputStream
 
 plugins {
-  id("com.android.application") version "8.13.2"
+  id("com.android.application") version "9.0.0"
 }
 
 dependencies {
-  // Following versions of androidx.window require sdk version 23
-  implementation("androidx.window:window-java:1.4.0")
-  implementation("androidx.core:core:1.16.0") // Version 1.17.0 available with sdk 36
   testImplementation("junit:junit:4.13.2")
 }
 
 android {
   namespace = "juloo.keyboard2"
-  compileSdkVersion = "android-35"
+  compileSdk = 36
 
   defaultConfig {
     applicationId = "juloo.keyboard2"
     minSdk = 21
-    targetSdk { version = release(35) }
-    versionCode = 50
-    versionName = "1.32.1"
+    targetSdk { version = release(36) }
+    versionCode = 1331
+    versionName = "1.33.1"
   }
 
   sourceSets {
     named("main") {
       manifest.srcFile("AndroidManifest.xml")
-      java.srcDirs("srcs/juloo.keyboard2", "vendor/cdict/java/juloo.cdict")
-      res.srcDirs("res", "build/generated-resources")
-      assets.srcDirs("assets")
+      java.directories.add("srcs/juloo.keyboard2")
+      res.directories.add("res")
+      res.directories.add("build/generated-resources")
+      assets.directories.add("assets")
     }
 
     named("test") {
-      java.srcDirs("test")
-    }
-  }
-
-  externalNativeBuild {
-    ndkBuild {
-      path = file("vendor/Android.mk")
+      java.directories.add("test")
     }
   }
 
@@ -56,14 +48,16 @@ android {
     }
 
     create("release") {
-      val ks = System.getenv("RELEASE_KEYSTORE")
-      if (ks != null) {
-        storeFile = file(ks)
-        storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
-        keyAlias = System.getenv("RELEASE_KEY_ALIAS")
-        keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
-      }
+      val ks = System.getenv("DEBUG_KEYSTORE") ?: "debug.keystore"
+      storeFile = file(ks)
+      storePassword = System.getenv("DEBUG_KEYSTORE_PASSWORD") ?: "debug0"
+      keyAlias = System.getenv("DEBUG_KEY_ALIAS") ?: "debug"
+      keyPassword = System.getenv("DEBUG_KEY_PASSWORD") ?: "debug0"
     }
+  }
+
+  buildFeatures {
+    resValues = true
   }
 
   buildTypes {
@@ -72,23 +66,22 @@ android {
       isShrinkResources = true
       isDebuggable = false
       resValue("string", "app_name", "@string/app_name_release")
-      signingConfig = signingConfigs["release"]
+      signingConfig = signingConfigs["debug"]
     }
 
     named("debug") {
-      isMinifyEnabled = false
-      isShrinkResources = false
-      isDebuggable = true
-      applicationIdSuffix = ".debug"
-      resValue("string", "app_name", "@string/app_name_debug")
-      resValue("bool", "debug_logs", "true")
+      isMinifyEnabled = true
+      isShrinkResources = true
+      isDebuggable = false
+      resValue("string", "app_name", "@string/app_name_release")
+      resValue("bool", "debug_logs", "false")
       signingConfig = signingConfigs["debug"]
     }
   }
 
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
   }
 }
 
@@ -122,7 +115,6 @@ val genLayoutsList by tasks.registering(Exec::class) {
 val genMethodXml by tasks.registering(Exec::class) {
   val out = projectDir.resolve("res/xml/method.xml")
   inputs.file(projectDir.resolve("gen_method_xml.py"))
-  inputs.file(projectDir.resolve("res/values/dictionaries.xml"))
   outputs.file(out)
   doFirst { println("\nGenerating res/xml/method.xml") }
   doFirst { standardOutput = FileOutputStream(out) }

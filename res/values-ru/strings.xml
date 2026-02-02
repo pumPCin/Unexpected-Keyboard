@@ -2,12 +2,10 @@
 <resources>
     <string name="app_name_release">Unexpected Keyboard</string>
     <string name="app_name_debug">Unexpected Keyboard (отладка)</string>
-    <string name="short_description">Легкая клавиатура для пользователей, заботящихся о конфиденциальности.</string>
+    <string name="short_description">Лёгкая клавиатура для пользователей, заботящихся о конфиденциальности.</string>
     <string name="store_description">Главная особенность клавиатуры — это возможность легко напечатать любой ASCII-символ жестами в углы клавиш.\n\nПриложение изначально было разработано для использования с Termux.\nНа данный момент оно также удобно в повседневном использовании.\n\nПриложение не содержит рекламы, не осуществляет никаких запросов в сеть и имеет открытый исходный код.</string>
     <string name="pref_portrait">В портретном режиме</string>
-    <string name="pref_portrait_unfolded">В развернутом портретном режиме</string>
     <string name="pref_landscape">В ландшафтном режиме</string>
-    <string name="pref_landscape_unfolded">В развернутом ландшафтном режиме</string>
     <string name="pref_category_layout">Расположение</string>
     <string name="pref_label_brightness">Изменить яркость клавиатуры</string>
     <string name="pref_keyboard_opacity">Изменить прозрачность фона</string>
@@ -44,8 +42,10 @@
     <string name="pref_category_behavior">Поведение</string>
     <string name="pref_autocapitalisation_title">Автоматическая смена регистра</string>
     <string name="pref_autocapitalisation_summary">Автоматическое нажатие Shift в начале каждого предложения</string>
-    <string name="pref_switch_input_immediate_title">Активировать предыдущую клавиатуру</string>
-    <string name="pref_switch_input_immediate_summary">Поведение клавиши переключения клавиатуры</string>
+    <string name="pref_change_method_key_replacement_title">Переключение между методами ввода</string>
+    <string name="pref_change_method_key_replacement_e_picker">Выбор метода ввода (долгое нажатие)</string>
+    <string name="pref_change_method_key_replacement_e_prev">Переключить на последний использованный</string>
+    <string name="pref_change_method_key_replacement_e_next">Переключить на следующий в списке</string>
     <string name="pref_vibrate_custom">Настройка вибрации</string>
     <string name="pref_vibrate_duration_title">Интенсивность вибрации</string>
     <string name="pref_number_entry_title">Раскладка для ввода цифр, дат и телефонных номеров</string>
@@ -60,18 +60,15 @@
     <string name="pref_character_size_summary">Размер символов, отображаемых на клавиатуре (%.2fx)</string>
     <string name="pref_theme">Тема</string>
     <string name="pref_theme_e_system">Системная</string>
-    <string name="pref_theme_e_dark">Темная</string>
-    <string name="pref_theme_e_light">Светлая</string>
-    <string name="pref_theme_e_black">Черная</string>
-    <string name="pref_theme_e_altblack">Альтернативная черная</string>
     <string name="pref_theme_e_white">Белая</string>
-    <string name="pref_theme_e_epaper">Электронная бумага</string>
-    <string name="pref_theme_e_desert">Пустыня</string>
-    <string name="pref_theme_e_jungle">Джунгли</string>
+    <string name="pref_theme_e_light">Светлая</string>
+    <string name="pref_theme_e_dark">Тёмная</string>
+    <string name="pref_theme_e_black">Чёрная</string>
+    <string name="pref_theme_e_altblack">Альтернативная чёрная</string>
     <string name="pref_theme_e_monet">Моне (системная)</string>
     <string name="pref_theme_e_monetlight">Моне (светлая)</string>
-    <string name="pref_theme_e_monetdark">Моне (темная)</string>
-    <string name="pref_theme_e_rosepine">Розовая сосна</string>
+    <string name="pref_theme_e_monetdark">Моне (тёмная)</string>
+    <string name="pref_theme_e_epaperblack">Эл. бумага (чёрная)</string>
     <string name="pref_swipe_dist_e_very_short">Очень короткая</string>
     <string name="pref_swipe_dist_e_short">Короткая</string>
     <string name="pref_swipe_dist_e_default">Обычная</string>
@@ -87,7 +84,11 @@
     <string name="pref_circle_sensitivity_e_medium">Средняя</string>
     <string name="pref_circle_sensitivity_e_low">Низкая</string>
     <string name="pref_circle_sensitivity_e_disabled">Отключено</string>
-    <string name="key_action_next">Вперед</string>
+    <string name="pref_slider_sensitivity_title">Чувствительность ползунка пробела</string>
+    <string name="pref_slider_sensitivity_slow">Медленная</string>
+    <string name="pref_slider_sensitivity_medium">Средняя</string>
+    <string name="pref_slider_sensitivity_fast">Быстрая</string>
+    <string name="key_action_next">Вперёд</string>
     <string name="key_action_done">Ввод</string>
     <string name="key_action_go">Перейти</string>
     <string name="key_action_prev">Назад</string>
@@ -107,7 +108,7 @@
     <string name="key_descr_copy">Копировать</string>
     <string name="key_descr_paste">Вставить</string>
     <string name="key_descr_cut">Вырезать</string>
-    <string name="key_descr_selectAll">Выбрать все</string>
+    <string name="key_descr_selectAll">Выбрать всё</string>
     <string name="key_descr_pasteAsPlainText">Вставить как простой текст</string>
     <string name="key_descr_undo">Отменить</string>
     <string name="key_descr_redo">Повторить</string>
@@ -115,8 +116,8 @@
     <string name="key_descr_º">Порядковый индикатор</string>
     <string name="key_descr_superscript">Надстрочные</string>
     <string name="key_descr_subscript">Подстрочные</string>
-    <string name="key_descr_page_up">Страница вверх</string>
-    <string name="key_descr_page_down">Страница вниз</string>
+    <string name="key_descr_page_up">PageUp</string>
+    <string name="key_descr_page_down">PageDown</string>
     <string name="key_descr_home">Home</string>
     <string name="key_descr_end">End</string>
     <string name="key_descr_clipboard">Менеджер буфера обмена</string>
@@ -134,4 +135,11 @@
     <string name="clipboard_remove_confirm">Удалить этот буфер обмена?</string>
     <string name="clipboard_remove_confirmed">Да</string>
     <string name="toast_no_voice_input">Приложение для голосового ввода не установлено</string>
+    <string name="pref_category_clipboard">Буфер обмена</string>
+    <string name="pref_clipboard_history_duration">Запоминать в буфере обмена</string>
+    <string name="pref_clipboard_history_duration_1">До 1 минуты</string>
+    <string name="pref_clipboard_history_duration_5">До 5 минут</string>
+    <string name="pref_clipboard_history_duration_30">До 30 минут</string>
+    <string name="pref_clipboard_history_duration_stop">До закрытия приложения</string>
+    <string name="pref_dialog_edit_text">Собственное определение</string>
 </resources>

@@ -142,7 +142,7 @@ public final class ClipboardHistoryService
   {
     ClipData clip = null;
     // getPrimaryClip might throw when the keyboard is disconnected.
-    try { clip = _cm.getPrimaryClip(); } catch (Exception _e) {}
+    try { clip = _cm.getPrimaryClip(); } catch (Exception ignored) {}
     if (clip == null)
       return;
     int count = clip.getItemCount();

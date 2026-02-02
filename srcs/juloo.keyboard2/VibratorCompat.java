@@ -29,7 +29,7 @@ public final class VibratorCompat
     {
       get_vibrator(v).vibrate(duration);
     }
-    catch (Exception e) {}
+    catch (Exception ignored) {}
   }
 
   static Vibrator vibrator_service = null;

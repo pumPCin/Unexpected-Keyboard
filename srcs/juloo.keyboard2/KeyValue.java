@@ -81,8 +81,6 @@ public final class KeyValue implements Comparable<KeyValue>
     DELETE_WORD,
     FORWARD_DELETE_WORD,
     SELECTION_CANCEL,
-    SPACE_BAR,
-    BACKSPACE,
   }
 
   public static enum Placeholder
@@ -524,7 +522,7 @@ public final class KeyValue implements Comparable<KeyValue>
     {
       return KeyValueParser.parse(name);
     }
-    catch (KeyValueParser.ParseError _e)
+    catch (KeyValueParser.ParseError ignored)
     {
       return makeStringKey(name);
     }
@@ -665,6 +663,7 @@ public final class KeyValue implements Comparable<KeyValue>
       case "page_down": return keyeventKey(0xE003, KeyEvent.KEYCODE_PAGE_DOWN, 0);
       case "home": return keyeventKey(0xE00B, KeyEvent.KEYCODE_MOVE_HOME, FLAG_SMALLER_FONT);
       case "end": return keyeventKey(0xE00C, KeyEvent.KEYCODE_MOVE_END, FLAG_SMALLER_FONT);
+      case "backspace": return keyeventKey(0xE011, KeyEvent.KEYCODE_DEL, 0);
       case "delete": return keyeventKey(0xE010, KeyEvent.KEYCODE_FORWARD_DEL, 0);
       case "insert": return keyeventKey("Ins", KeyEvent.KEYCODE_INSERT, FLAG_SMALLER_FONT);
       case "f1": return keyeventKey("F1", KeyEvent.KEYCODE_F1, 0);
@@ -686,7 +685,7 @@ public final class KeyValue implements Comparable<KeyValue>
       /* Spaces */
       case "\\t": return charKey("\\t", '\t', 0); // Send the tab character
       case "\\n": return charKey("\\n", '\n', 0); // Send the newline character
-      case "space": return editingKey(0xE00D, Editing.SPACE_BAR, FLAG_SMALLER_FONT | FLAG_GREYED);
+      case "space": return charKey(0xE00D, ' ', FLAG_SMALLER_FONT | FLAG_GREYED);
       case "nbsp": return charKey("\u237d", '\u00a0', FLAG_SMALLER_FONT);
       case "nnbsp": return charKey("\u2423", '\u202F', FLAG_SMALLER_FONT);
 
@@ -735,7 +734,6 @@ public final class KeyValue implements Comparable<KeyValue>
       case "halfspace": return charKey(0xE018, '\u200C', 0); // zero-width non joiner
 
       /* Editing keys */
-      case "backspace": return editingKey(0xE011, Editing.BACKSPACE, 0);
       case "copy": return editingKey(0xE030, Editing.COPY);
       case "paste": return editingKey(0xE032, Editing.PASTE);
       case "cut": return editingKey(0xE031, Editing.CUT);
@@ -766,73 +764,6 @@ public final class KeyValue implements Comparable<KeyValue>
       case "removed": return placeholderKey(Placeholder.REMOVED);
       case "f11_placeholder": return placeholderKey(Placeholder.F11);
       case "f12_placeholder": return placeholderKey(Placeholder.F12);
-
-      // Korean Hangul
-      case "ㄱ": return makeHangulInitial("ㄱ", 0);
-      case "ㄲ": return makeHangulInitial("ㄲ", 1);
-      case "ㄴ": return makeHangulInitial("ㄴ", 2);
-      case "ㄷ": return makeHangulInitial("ㄷ", 3);
-      case "ㄸ": return makeHangulInitial("ㄸ", 4);
-      case "ㄹ": return makeHangulInitial("ㄹ", 5);
-      case "ㅁ": return makeHangulInitial("ㅁ", 6);
-      case "ㅂ": return makeHangulInitial("ㅂ", 7);
-      case "ㅃ": return makeHangulInitial("ㅃ", 8);
-      case "ㅅ": return makeHangulInitial("ㅅ", 9);
-      case "ㅆ": return makeHangulInitial("ㅆ", 10);
-      case "ㅇ": return makeHangulInitial("ㅇ", 11);
-      case "ㅈ": return makeHangulInitial("ㅈ", 12);
-      case "ㅉ": return makeHangulInitial("ㅉ", 13);
-      case "ㅊ": return makeHangulInitial("ㅊ", 14);
-      case "ㅋ": return makeHangulInitial("ㅋ", 15);
-      case "ㅌ": return makeHangulInitial("ㅌ", 16);
-      case "ㅍ": return makeHangulInitial("ㅍ", 17);
-      case "ㅎ": return makeHangulInitial("ㅎ", 18);
-
-      /* Tamil letters should be smaller on the keyboard. */
-      case "ஔ": case "ந": case "ல": case "ழ": case "௯": case "க":
-      case "ஷ": case "ே": case "௨": case "ஜ": case "ங": case "ன":
-      case "௦": case "ை": case "ூ": case "ம": case "ஆ": case "௭":
-      case "௪": case "ா": case "ஶ": case "௬": case "வ": case "ஸ":
-      case "௮": case "ட": case "ப": case "ஈ": case "௩": case "ஒ":
-      case "ௌ": case "உ": case "௫": case "ய": case "ர": case "ு":
-      case "இ": case "ோ": case "ஓ": case "ஃ": case "ற": case "த":
-      case "௧": case "ண": case "ஏ": case "ஊ": case "ொ": case "ஞ":
-      case "அ": case "எ": case "ச": case "ெ": case "ஐ": case "ி":
-      case "௹": case "ள": case "ஹ": case "௰": case "ௐ": case "௱":
-      case "௲": case "௳":
-        return makeStringKey(name, FLAG_SMALLER_FONT);
-
-      /* Sinhala letters to reduced size */
-      case "අ": case "ආ": case "ඇ": case "ඈ": case "ඉ":
-      case "ඊ": case "උ": case "ඌ": case "ඍ": case "ඎ":
-      case "ඏ": case "ඐ": case "එ": case "ඒ": case "ඓ":
-      case "ඔ": case "ඕ": case "ඖ": case "ක": case "ඛ":
-      case "ග": case "ඝ": case "ඞ": case "ඟ": case "ච":
-      case "ඡ": case "ජ": case "ඣ": case "ඤ": case "ඥ":
-      case "ඦ": case "ට": case "ඨ": case "ඩ": case "ඪ":
-      case "ණ": case "ඬ": case "ත": case "ථ": case "ද":
-      case "ධ": case "න": case "ඳ": case "ප": case "ඵ":
-      case "බ": case "භ": case "ම": case "ඹ": case "ය":
-      case "ර": case "ල": case "ව": case "ශ": case "ෂ":
-      case "ස": case "හ": case "ළ": case "ෆ":
-      /* Astrological numbers */
-      case "෦": case "෧": case "෨": case "෩": case "෪":
-      case "෫": case "෬": case "෭": case "෮": case "෯":
-      case "ෲ": case "ෳ":
-      /* Diacritics */
-      case "\u0d81": case "\u0d82": case "\u0d83": case "\u0dca":
-      case "\u0dcf": case "\u0dd0": case "\u0dd1": case "\u0dd2":
-      case "\u0dd3": case "\u0dd4": case "\u0dd6": case "\u0dd8":
-      case "\u0dd9": case "\u0dda": case "\u0ddb": case "\u0ddc":
-      case "\u0ddd": case "\u0dde": case "\u0ddf":
-      /* Archaic digits */
-      case "𑇡": case "𑇢": case "𑇣": case "𑇤": case "𑇥":
-      case "𑇦": case "𑇧": case "𑇨": case "𑇩": case "𑇪":
-      case "𑇫": case "𑇬": case "𑇭": case "𑇮": case "𑇯":
-      case "𑇰": case "𑇱": case "𑇲": case "𑇳": case "𑇴":
-      /* Exta */
-      case "෴": case "₨":  // Rupee is not exclusively Sinhala sign
-        return makeStringKey(name, FLAG_SMALLER_FONT);
 
       /* Internal keys */
       case "selection_mode": return SELECTION_MODE;

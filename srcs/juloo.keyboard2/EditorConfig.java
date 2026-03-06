@@ -1,20 +1,16 @@
 package juloo.keyboard2;
 
 import android.content.res.Resources;
-import android.os.Build.VERSION;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.inputmethod.EditorInfo;
-import juloo.keyboard2.suggestions.CandidatesView;
 
 public final class EditorConfig
 {
-  /** Key that replaces the "ACTION" key. Might be [null] to remove that key. */
-  public KeyValue action_key_replacement = null;
-  /** Key that replaces the "ENTER" key. Might be [null] to not replace the
-      enter key. */
-  public KeyValue enter_key_replacement = null;
+  public String actionLabel = null; // Might be [null]
+  /** Action performed by the Action key. Only when [actionLabel != null]. */
   public int actionId;
+  public boolean swapEnterActionKey = false; // Swap the "enter" and "action" keys
   /** Whether selection mode turns on automatically when text is selected. */
   public boolean selection_mode_enabled = true;
   /** Whether the numeric layout should be shown by default. */
@@ -30,15 +26,6 @@ public final class EditorConfig
   // Whether caps state should be updated right away.
   public boolean caps_initially_updated = false;
 
-  /** CurrentlyTypedWord. */
-  public CharSequence initial_text_before_cursor = null; // Might be [null].
-  public int initial_sel_start;
-  public int initial_sel_end;
-
-  /** Suggestions. */
-  // Doesn't override [_config.suggestions_enabled].
-  public boolean should_show_candidates_view;
-
   public EditorConfig() {}
 
   public void refresh(EditorInfo info, Resources res)
@@ -48,29 +35,18 @@ public final class EditorConfig
     /* Selection mode.
        Editors with [TYPE_NULL] are for example Termux and Emacs. */
     selection_mode_enabled = inputType != InputType.TYPE_NULL;
-    enter_key_replacement = null;
     /* Action key. Looks at [info.actionLabel] first. */
     if (info.actionLabel != null)
     {
+      actionLabel = info.actionLabel.toString();
       actionId = info.actionId;
-      action_key_replacement =
-        KeyValue.makeActionKey(info.actionLabel.toString());
+      swapEnterActionKey = false;
     }
     else
     {
       actionId = options & EditorInfo.IME_MASK_ACTION;
-      String label = actionLabel_of_imeAction(actionId, res);
-      action_key_replacement = null;
-      if (label != null)
-      {
-        action_key_replacement = KeyValue.makeActionKey(label);
-        // Swap the enter and action keys
-        if ((options & EditorInfo.IME_FLAG_NO_ENTER_ACTION) == 0)
-        {
-          enter_key_replacement = action_key_replacement;
-          action_key_replacement = KeyValue.ENTER;
-        }
-      }
+      actionLabel = actionLabel_of_imeAction(actionId, res);
+      swapEnterActionKey = (options & EditorInfo.IME_FLAG_NO_ENTER_ACTION) == 0;
     }
     /* Numeric layout */
     switch (inputType)
@@ -90,13 +66,6 @@ public final class EditorConfig
     caps_mode = info.inputType & TextUtils.CAP_MODE_SENTENCES;
     caps_initially_enabled = (info.initialCapsMode != 0);
     caps_initially_updated = caps_should_update_state(info);
-    /* CurrentlyTypedWord */
-    if (VERSION.SDK_INT >= 30)
-      initial_text_before_cursor = info.getInitialTextBeforeCursor(10, 0);
-    initial_sel_start = info.initialSelStart;
-    initial_sel_end = info.initialSelEnd;
-    /* Suggestions */
-    should_show_candidates_view = CandidatesView.should_show(info);
   }
 
   String actionLabel_of_imeAction(int action, Resources res)

@@ -11,36 +11,8 @@ import glob, os, sys
 # Map language codes to the codes that Google Play understands. Languages
 # mapped to [None] are not supported by Google Play.
 VALUE_DIR_TO_METADATA = {
-        "ar": "ar",
-        "ars": None,
-        "arz": None,
-        "bn-rBD": None,
-        "ca": "ca",
-        "cs": "cs-CZ",
-        "de": "de-DE",
         "en": "en-US",
-        "es": "es-ES",
-        "fa": None,
-        "fil": "fil",
-        "fr": "fr-FR",
-        "in": "id",
-        "it": "it-IT",
-        "ja": "ja-JP",
-        "ko": "ko-KR",
-        "lv": "lv",
-        "my": None,
-        "nl": "nl-NL",
-        "pl": "pl-PL",
-        "pt": "pt-BR",
-        "ro": "ro",
         "ru": "ru-RU",
-        "th": "th",
-        "tok": None,
-        "tr": "tr-TR",
-        "uk": "uk",
-        "vi": "vi",
-        "zh-rCN": "zh-CN",
-        "zh-rTW": "zh-TW",
         }
 
 # Dict of strings. Key is the pair string name and product field (often None).

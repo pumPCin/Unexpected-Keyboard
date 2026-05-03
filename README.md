@@ -34,7 +34,3 @@ Improve the application translations [using Weblate](https://hosted.weblate.org/
 
 For instructions on building the application, see
 [Contributing](CONTRIBUTING.md).
-
-## Acknowledgement
-
-The [NLnet foundation](https://nlnet.nl/) funded the work on the spell checking feature.

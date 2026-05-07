@@ -16,7 +16,7 @@ The main feature is that you can type more characters by swiping the keys toward
 This application was originally designed for programmers using Termux.
 Now perfect for everyday use.
 
-This application contains no ads and is open source.
+This application contains no ads, doesn't make any network requests and is open source.
 
 Usage: to apply the symbols located in the corners of each key, slide your finger in the direction of the symbols. For example, the Settings are opened by sliding in the left down corner.
 
@@ -34,7 +34,3 @@ Improve the application translations [using Weblate](https://hosted.weblate.org/
 
 For instructions on building the application, see
 [Contributing](CONTRIBUTING.md).
-
-## Acknowledgement
-
-The [NLnet foundation](https://nlnet.nl/) funded the work on the spell checking feature.

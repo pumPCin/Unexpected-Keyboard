@@ -158,7 +158,12 @@ public final class LayoutModifier
           case CHANGE_METHOD_PICKER:
             return globalConfig.change_method_key_replacement;
           case ACTION:
-            return ec.action_key_replacement;
+            String action_label = ec.actionLabel;
+            if (action_label == null)
+              return null; // Remove the action key
+            if (ec.swapEnterActionKey)
+              return KeyValue.getKeyByName("enter");
+            return KeyValue.makeActionKey(action_label);
           case SWITCH_FORWARD:
             return (globalConfig.layouts.size() > 1) ? orig : null;
           case SWITCH_BACKWARD:
@@ -172,8 +177,8 @@ public final class LayoutModifier
         switch (orig.getKeyevent())
         {
           case KeyEvent.KEYCODE_ENTER:
-            if (ec.enter_key_replacement != null)
-              return ec.enter_key_replacement;
+            if (ec.swapEnterActionKey && ec.actionLabel != null)
+              return KeyValue.makeActionKey(ec.actionLabel);
             break;
         }
         break;
@@ -205,9 +210,9 @@ public final class LayoutModifier
       bottom_row = KeyboardData.load_row(res, R.xml.bottom_row);
       num_pad = KeyboardData.load_num_pad(res);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
-      throw new RuntimeException(e.getMessage()); // Not recoverable
+      throw new RuntimeException(); // Not recoverable
     }
   }
 }

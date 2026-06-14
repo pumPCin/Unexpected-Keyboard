@@ -477,6 +477,9 @@ public class Keyboard2 extends InputMethodService
           VoiceImeSwitcher.choose_voice_ime(Keyboard2.this, get_imm(),
               Config.globalPrefs());
           break;
+        case HIDE_SELF:
+          Keyboard2.this.requestHideSelf(0);
+          break;
       }
     }
 

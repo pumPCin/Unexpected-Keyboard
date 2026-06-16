@@ -199,10 +199,7 @@ public final class KeyboardData
       parser = res.getXml(id);
       l = parse_keyboard(parser);
     }
-    catch (Exception e)
-    {
-      Logs.exn("Failed to load layout id " + id, e);
-    }
+    catch (Exception ignored) {}
     if (parser != null)
       parser.close();
     _layoutCache.put(id, l);
@@ -216,7 +213,7 @@ public final class KeyboardData
     {
       return load_string_exn(src);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
       return null;
     }

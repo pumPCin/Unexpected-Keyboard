@@ -12,12 +12,6 @@ public final class ComposeKey
     {
       case Char: return apply(state, kv.getChar());
       case String: return apply(state, kv.getString());
-      case Editing:
-        switch (kv.getEditing())
-        {
-          case SPACE_BAR: return apply(state, ' ');
-        }
-        break;
     }
     return null;
   }

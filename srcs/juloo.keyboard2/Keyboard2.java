@@ -10,8 +10,6 @@ import android.os.Build.VERSION;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.InputType;
-import android.util.Log;
-import android.util.LogPrinter;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -25,12 +23,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import juloo.cdict.Cdict;
-import juloo.keyboard2.dict.Dictionaries;
-import juloo.keyboard2.dict.DictionariesActivity;
 import juloo.keyboard2.prefs.LayoutsPreference;
-import juloo.keyboard2.suggestions.CandidatesView;
-import juloo.keyboard2.suggestions.Suggestions;
 
 public class Keyboard2 extends InputMethodService
   implements SharedPreferences.OnSharedPreferenceChangeListener
@@ -38,21 +31,18 @@ public class Keyboard2 extends InputMethodService
   /** The view containing the keyboard and candidates view. */
   private ViewGroup _keyboard_container_view;
   private Keyboard2View _keyboard_layout_view;
-  private CandidatesView _candidates_view;
   private KeyEventHandler _keyeventhandler;
   /** If not 'null', the layout to use instead of [_config.current_layout]. */
   private KeyboardData _currentSpecialLayout;
   /** Layout associated with the currently selected locale. Not 'null'. */
   private KeyboardData _localeTextLayout;
   /** Installed and current locales. */
-  private Dictionaries _dictionaries;
+  private DeviceLocales _device_locales;
   private ViewGroup _emojiPane = null;
   private ViewGroup _clipboard_pane = null;
   private Handler _handler;
 
   private Config _config;
-
-  private FoldStateTracker _foldStateTracker;
 
   /** Layout currently visible before it has been modified. */
   KeyboardData current_layout_unmodified()
@@ -121,33 +111,20 @@ public class Keyboard2 extends InputMethodService
     super.onCreate();
     SharedPreferences prefs = DirectBootAwarePreferences.get_shared_preferences(this);
     _handler = new Handler(getMainLooper());
-    _foldStateTracker = new FoldStateTracker(this);
-    _dictionaries = Dictionaries.instance(this);
-    Config.initGlobalConfig(prefs, getResources(),
-        _foldStateTracker.isUnfolded(), _dictionaries);
+    Config.initGlobalConfig(prefs, getResources());
     _config = Config.globalConfig();
     _keyeventhandler = new KeyEventHandler(this.new Receiver(), _config);
     _config.handler = _keyeventhandler;
     prefs.registerOnSharedPreferenceChangeListener(this);
-    Logs.set_debug_logs(getResources().getBoolean(R.bool.debug_logs));
     refreshSubtypeImm();
     create_keyboard_view();
     ClipboardHistoryService.on_startup(this, _keyeventhandler);
-    _foldStateTracker.setChangedCallback(() -> { refresh_config(); });
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-
-    _foldStateTracker.close();
   }
 
   private void create_keyboard_view()
   {
     _keyboard_container_view = (ViewGroup)inflate_view(R.layout.keyboard);
     _keyboard_layout_view = (Keyboard2View)_keyboard_container_view.findViewById(R.id.keyboard_view);
-    _candidates_view = (CandidatesView)_keyboard_container_view.findViewById(R.id.candidates_view);
   }
 
   InputMethodManager get_imm()
@@ -172,39 +149,12 @@ public class Keyboard2 extends InputMethodService
     _localeTextLayout = default_layout;
   }
 
-  private void refresh_current_dictionary()
-  {
-    _config.current_dictionary = null;
-    _config.emoji_dictionary = null;
-    if (_config.device_locales.default_ == null)
-      return;
-    String current = _config.device_locales.default_.dictionary;
-    if (current == null)
-      return;
-    Cdict[] dicts = _dictionaries.load(current);
-    if (dicts == null)
-      return;
-    _config.current_dictionary = Dictionaries.find_by_name(dicts, "main");
-    _config.emoji_dictionary = Dictionaries.find_by_name(dicts, "emoji");
-  }
-
-  private void refresh_candidates_view()
-  {
-    boolean should_show =
-      _config.suggestions_enabled
-      && _config.editor_config.should_show_candidates_view;
-    if (should_show)
-      _candidates_view.refresh_config(_config);
-    _candidates_view.setVisibility(should_show ? View.VISIBLE : View.GONE);
-  }
-
   /** Might re-create the keyboard view. [_keyboard_layout_view.setKeyboard()] and
       [setInputView()] must be called soon after. */
   private void refresh_config()
   {
     int prev_theme = _config.theme;
-    _config.refresh(getResources(), _foldStateTracker.isUnfolded(), _dictionaries);
-    refresh_current_dictionary();
+    _config.refresh(getResources());
     // Refreshing the theme config requires re-creating the views
     if (prev_theme != _config.theme)
     {
@@ -218,7 +168,6 @@ public class Keyboard2 extends InputMethodService
     bg.setAlpha(_config.keyboardOpacity);
     _keyboard_container_view.setBackground(bg);
     _keyboard_layout_view.reset();
-    refresh_candidates_view();
   }
 
   private KeyboardData refresh_special_layout()
@@ -243,7 +192,6 @@ public class Keyboard2 extends InputMethodService
     _keyboard_layout_view.setKeyboard(current_layout());
     _keyeventhandler.started(_config);
     setInputView(_keyboard_container_view);
-    Logs.debug_startup_input_view(info, _config);
   }
 
   @Override
@@ -325,10 +273,7 @@ public class Keyboard2 extends InputMethodService
   public void onCurrentInputMethodSubtypeChanged(InputMethodSubtype subtype)
   {
     refreshSubtypeImm();
-    refresh_current_dictionary();
-    refresh_candidates_view();
     _keyboard_layout_view.setKeyboard(current_layout());
-    _keyeventhandler.ime_subtype_changed();
   }
 
   @Override
@@ -371,16 +316,9 @@ public class Keyboard2 extends InputMethodService
         == Configuration.HARDKEYBOARDHIDDEN_NO
         && _config.physical_keyboard_hide)
     {
-      Logs.debug("Physical keyboard is present");
       return false;
     }
     return true;
-  }
-
-  /** Called from [onClick] attributes. */
-  public void launch_dictionaries_activity(View v)
-  {
-    start_activity(DictionariesActivity.class);
   }
 
   void start_activity(Class cls)
@@ -506,11 +444,6 @@ public class Keyboard2 extends InputMethodService
     public Handler getHandler()
     {
       return _handler;
-    }
-
-    public void set_suggestions(Suggestions suggestions)
-    {
-      _candidates_view.set_candidates(suggestions);
     }
   }
 

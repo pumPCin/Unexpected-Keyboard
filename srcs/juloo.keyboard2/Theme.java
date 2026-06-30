@@ -13,7 +13,6 @@ public class Theme
   public final int colorKey;
   public final int colorKeyActivated;
   public final int colorKeyAction;
-  public final int colorKeySpaceBar;
 
   // Label colors
   public final int lockedColor;
@@ -29,7 +28,6 @@ public class Theme
   public final float keyBorderWidth;
   public final float keyBorderWidthActivated;
   public final float keyBorderWidthAction;
-  public final float keyBorderWidthSpaceBar;
   public final int keyBorderColorLeft;
   public final int keyBorderColorTop;
   public final int keyBorderColorRight;
@@ -45,7 +43,6 @@ public class Theme
     colorKey = s.getColor(R.styleable.keyboard_colorKey, 0);
     colorKeyActivated = s.getColor(R.styleable.keyboard_colorKeyActivated, 0);
     colorKeyAction = s.getColor(R.styleable.keyboard_colorKeyAction, colorKey);
-    colorKeySpaceBar = s.getColor(R.styleable.keyboard_colorKeySpaceBar, colorKey);
     // colorKeyboard = s.getColor(R.styleable.keyboard_colorKeyboard, 0);
     colorNavBar = s.getColor(R.styleable.keyboard_navigationBarColor, 0);
     isLightNavBar = s.getBoolean(R.styleable.keyboard_windowLightNavigationBar, false);
@@ -62,7 +59,6 @@ public class Theme
     keyBorderWidth = s.getDimension(R.styleable.keyboard_keyBorderWidth, 0);
     keyBorderWidthActivated = s.getDimension(R.styleable.keyboard_keyBorderWidthActivated, 0);
     keyBorderWidthAction = s.getDimension(R.styleable.keyboard_keyBorderWidthAction, 0);
-    keyBorderWidthSpaceBar = s.getDimension(R.styleable.keyboard_keyBorderWidthSpaceBar, 0);
     keyBorderColorLeft = s.getColor(R.styleable.keyboard_keyBorderColorLeft, colorKey);
     keyBorderColorTop = s.getColor(R.styleable.keyboard_keyBorderColorTop, colorKey);
     keyBorderColorRight = s.getColor(R.styleable.keyboard_keyBorderColorRight, colorKey);
@@ -110,7 +106,6 @@ public class Theme
     public final Key key;
     public final Key key_activated;
     public final Key key_action;
-    public final Key key_space_bar;
 
     public Computed(Theme theme, Config config, float keyWidth, KeyboardData layout)
     {
@@ -126,7 +121,6 @@ public class Theme
       margin_left = horizontal_margin / 2;
       key = new Key(theme, config, keyWidth, false, KeyboardData.Key.Role.Normal);
       key_action = new Key(theme, config, keyWidth, false, KeyboardData.Key.Role.Action);
-      key_space_bar = new Key(theme, config, keyWidth, false, KeyboardData.Key.Role.Space_bar);
       key_activated = new Key(theme, config, keyWidth, true, KeyboardData.Key.Role.Normal);
       indication_paint = init_label_paint(config, null);
       indication_paint.setColor(theme.subLabelColor);
@@ -165,10 +159,6 @@ public class Theme
             case Action:
               bg_color = theme.colorKeyAction;
               border_width = theme.keyBorderWidthAction;
-              break;
-            case Space_bar:
-              bg_color = theme.colorKeySpaceBar;
-              border_width = theme.keyBorderWidthSpaceBar;
               break;
             default:
               bg_color = theme.colorKey;

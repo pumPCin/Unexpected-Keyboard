@@ -358,7 +358,6 @@ public class Keyboard2View extends View
           switch (k.role)
           {
             case Action: tc_key = _tc.key_action; break;
-            case Space_bar: tc_key = _tc.key_space_bar; break;
             default:
             case Normal: tc_key = _tc.key; break;
           }

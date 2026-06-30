@@ -23,9 +23,8 @@ public class SvgToVector
       warnings = Svg2Vector.parseSvgToXml(input_file, output_stream);
       System.err.println(warnings);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
-      e.printStackTrace();
       System.exit(2);
     }
   }

@@ -121,7 +121,6 @@ def check_layout(layout):
 
     should_have_role(keys_map, "action",
                      [ "shift", "ctrl", "fn", "backspace", "enter" ])
-    should_have_role(keys_map, "space_bar", [ "space" ])
 
     keys_without_loc = set(( k.removeprefix("loc ") for k in keys ))
     # Keys with a len under 3 are often composed characters

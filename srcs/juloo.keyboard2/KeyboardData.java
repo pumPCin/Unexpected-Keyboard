@@ -199,10 +199,7 @@ public final class KeyboardData
       parser = res.getXml(id);
       l = parse_keyboard(parser);
     }
-    catch (Exception e)
-    {
-      Logs.exn("Failed to load layout id " + id, e);
-    }
+    catch (Exception ignored) {}
     if (parser != null)
       parser.close();
     _layoutCache.put(id, l);
@@ -216,7 +213,7 @@ public final class KeyboardData
     {
       return load_string_exn(src);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
       return null;
     }
@@ -567,15 +564,13 @@ public final class KeyboardData
     public static enum Role
     {
       Normal,
-      Action, // Generally Shift, Delete and keys on the bottom row
-      Space_bar;
+      Action; // Generally Shift, Delete and keys on the bottom row
 
       public static Role parse(String str)
       {
         switch (str)
         {
           case "action": return Action;
-          case "space_bar": return Space_bar;
           default: case "normal": return Normal;
         }
       }

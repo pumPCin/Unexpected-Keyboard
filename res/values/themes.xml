@@ -9,6 +9,7 @@
     <attr name="colorKeyActivated" format="color"/>
     <!-- Adjust the lightness of keys depending on their role. -->
     <attr name="colorKeyAction" format="color"/>
+    <attr name="colorKeySpaceBar" format="color"/>
     <!-- Label colors -->
     <attr name="colorLabel" format="color"/>
     <attr name="colorLabelPressed" format="color"/> <!-- defaults to colorLabel -->
@@ -23,6 +24,7 @@
     <attr name="keyBorderWidth" format="dimension"/>
     <attr name="keyBorderWidthActivated" format="dimension"/>
     <attr name="keyBorderWidthAction" format="dimension"/>
+    <attr name="keyBorderWidthSpaceBar" format="dimension"/>
     <attr name="keyBorderColorLeft" format="color"/>
     <attr name="keyBorderColorTop" format="color"/>
     <attr name="keyBorderColorRight" format="color"/>
@@ -47,6 +49,7 @@
     <item name="keyBorderWidth">0dp</item>
     <item name="keyBorderWidthActivated">0dp</item>
     <item name="keyBorderWidthAction">?attr/keyBorderWidth</item>
+    <item name="keyBorderWidthSpaceBar">?attr/keyBorderWidth</item>
     <item name="secondaryDimming">0.25</item>
     <item name="greyedDimming">0.5</item>
     <item name="emoji_key_bg" type="color">?attr/emoji_button_bg</item>
@@ -59,6 +62,7 @@
     <item name="colorKeyboard">#ffffff</item>
     <item name="colorKey">#ffffff</item>
     <item name="colorKeyAction">#ffffff</item>
+    <item name="colorKeySpaceBar">#ffffff</item>
     <item name="keyBorderWidth">1dp</item>
     <item name="keyBorderWidthActivated">1dp</item>
     <item name="keyBorderColorLeft">#f0f0f0</item>
@@ -80,9 +84,11 @@
     <item name="colorKey">#cccccc</item>
     <item name="colorKeyActivated">#e3e3e3</item>
     <item name="colorKeyAction">#d9d9d9</item>
+    <item name="colorKeySpaceBar">#dedede</item>
     <item name="keyBorderWidth">0.6dp</item>
     <item name="keyBorderWidthActivated">0dp</item>
     <item name="keyBorderWidthAction">0dp</item>
+    <item name="keyBorderWidthSpaceBar">0dp</item>
     <item name="keyBorderColorLeft">#cccccc</item>
     <item name="keyBorderColorTop">#eeeeee</item>
     <item name="keyBorderColorRight">#cccccc</item>
@@ -100,9 +106,11 @@
     <item name="colorKey">#333333</item>
     <item name="colorKeyActivated">#1b1b1b</item>
     <item name="colorKeyAction">#262626</item>
+    <item name="colorKeySpaceBar">#2b2b2b</item>
     <item name="keyBorderWidth">1.2dp</item>
     <item name="keyBorderWidthActivated">0dp</item>
     <item name="keyBorderWidthAction">0dp</item>
+    <item name="keyBorderWidthSpaceBar">0dp</item>
     <item name="keyBorderColorBottom">#404040</item>
     <item name="colorLabel">#ffffff</item>
     <item name="colorLabelActivated">#3399ff</item>
@@ -117,6 +125,7 @@
     <item name="colorKey">#000000</item>
     <item name="colorKeyActivated">#333333</item>
     <item name="colorKeyAction">#000000</item>
+    <item name="colorKeySpaceBar">#000000</item>
     <item name="keyBorderWidth">0dp</item>
     <item name="keyBorderWidthActivated">1dp</item>
     <item name="keyBorderColorLeft">#2a2a2a</item>
@@ -140,6 +149,7 @@
     <item name="colorKey">@color/system_neutral1_50</item>
     <item name="colorKeyActivated">?colorKeyboard</item>
     <item name="colorKeyAction">@color/system_accent1_100</item>
+    <item name="colorKeySpaceBar">@color/system_accent1_200</item>
     <item name="colorLabel">@color/system_neutral1_800</item>
     <item name="colorLabelActivated">@color/system_accent1_400</item>
     <item name="colorLabelLocked">@color/system_accent1_600</item>

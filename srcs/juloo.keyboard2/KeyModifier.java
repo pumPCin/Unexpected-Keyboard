@@ -287,6 +287,7 @@ public final class KeyModifier
     {
       case UNDO: return "redo";
       case PASTE: return "pasteAsPlainText";
+      case SPACE_BAR: return "nbsp";
       default: return null;
     }
   }

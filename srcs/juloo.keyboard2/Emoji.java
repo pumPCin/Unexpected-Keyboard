@@ -61,7 +61,7 @@ public class Emoji
         _groups.add(_all.subList(last, _all.size()));
       }
     }
-    catch (IOException e) { Logs.exn("Emoji.init() failed", e); }
+    catch (IOException ignored) {}
   }
 
   public static int getNumGroups()

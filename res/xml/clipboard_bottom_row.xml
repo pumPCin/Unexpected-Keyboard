@@ -3,7 +3,7 @@
 <keyboard bottom_row="false">
   <row height="0.95">
     <key role="action" key0="switch_back_clipboard"/>
-    <key width="3" role="space_bar" key0="space" key5="cursor_left" key6="cursor_right"/>
+    <key width="3" role="action" key0="space" key5="cursor_left" key6="cursor_right"/>
     <key role="action" key0="backspace" key2="delete"/>
     <key role="action" key0="enter" key2="action"/>
   </row>

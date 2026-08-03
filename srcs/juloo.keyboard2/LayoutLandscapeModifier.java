@@ -54,7 +54,6 @@ public final class LayoutLandscapeModifier
     List<KeyboardData.Key> new_keys = new ArrayList<KeyboardData.Key>(r.keys);
     KeyboardData.Key k = new_keys.get(i);
     new_keys.set(i, k.withShift(k.shift + ADDED_WIDTH));
-    add_middle_key(new_keys, i, row_index);
     return r.with_keys(new_keys);
   }
 
@@ -72,22 +71,6 @@ public final class LayoutLandscapeModifier
     float mid_d = Math.min(off - (r.keysWidth + k.width) / 2, k_width - 1);
     new_keys.add(i + 1, k.withWidthAndShift(k_width + mid_d, ADDED_WIDTH - 1));
     new_keys.set(i, k.withWidth(k_width - mid_d));
-    add_middle_key(new_keys, i + 1, row_index);
     return r.with_keys(new_keys);
   }
-
-  /** Add the middle column defined in [split_middle_column.xml]. */
-  static void add_middle_key(List<KeyboardData.Key> new_keys, int i,
-      int row_index)
-  {
-    List<KeyboardData.Key> mid_keys = LayoutModifier.split_middle_column.keys;
-    if (row_index >= mid_keys.size())
-      return;
-    KeyboardData.Key mid_key = mid_keys.get(row_index);
-    KeyboardData.Key right_key = new_keys.get(i);
-    float shift = (right_key.shift - mid_key.width) / 2.f;
-    new_keys.set(i, right_key.withShift(shift));
-    new_keys.add(i, mid_key.withShift(shift));
-  }
-
 }

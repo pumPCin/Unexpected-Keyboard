@@ -194,9 +194,9 @@ public class LayoutsPreference extends ListGroupPreference<LayoutsPreference.Lay
               KeyboardData.load_string_exn(text);
               return null; // Validation passed
             }
-            catch (Exception e)
+            catch (Exception ignored)
             {
-              return e.getMessage();
+              return null;
             }
           }
         });
@@ -221,7 +221,7 @@ public class LayoutsPreference extends ListGroupPreference<LayoutsPreference.Lay
       Resources res = getContext().getResources();
       return Utils.read_all_utf8(res.openRawResource(R.raw.latn_qwerty_us));
     }
-    catch (Exception _e)
+    catch (Exception ignored)
     {
       return "";
     }
@@ -263,7 +263,7 @@ public class LayoutsPreference extends ListGroupPreference<LayoutsPreference.Lay
     {
       KeyboardData parsed = null;
       try { parsed = KeyboardData.load_string_exn(xml); }
-      catch (Exception e) {}
+      catch (Exception ignored) {}
       return new CustomLayout(xml, parsed);
     }
   }

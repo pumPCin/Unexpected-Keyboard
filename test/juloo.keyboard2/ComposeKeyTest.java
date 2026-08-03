@@ -75,11 +75,4 @@ public class ComposeKeyTest
   {
     return ComposeKey.apply(state, seq);
   }
-
-  KeyValue apply(KeyValue prev, KeyValue next)
-  {
-    if (prev.getKind() != KeyValue.Kind.Compose_pending)
-      return null;
-    return ComposeKey.apply(prev.getPendingCompose(), next);
-  }
 }

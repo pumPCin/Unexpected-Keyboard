@@ -52,7 +52,7 @@ public final class DirectBootAwarePreferences
     {
       prefs = PreferenceManager.getDefaultSharedPreferences(app_context);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
       // Device is locked, migrate later.
       return;

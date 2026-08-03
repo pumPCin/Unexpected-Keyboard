@@ -14,8 +14,6 @@ public final class LayoutModifier
   static KeyboardData.Row number_row_no_symbols;
   static KeyboardData.Row number_row_symbols;
   static KeyboardData num_pad;
-  // Not used in this file but defined here for convenience.
-  public static KeyboardData.Row split_middle_column;
 
   /** Update the layout according to the configuration.
    *  - Remove the switching key if it isn't needed
@@ -165,7 +163,12 @@ public final class LayoutModifier
           case CHANGE_METHOD_PICKER:
             return globalConfig.change_method_key_replacement;
           case ACTION:
-            return ec.action_key_replacement;
+            String action_label = ec.actionLabel;
+            if (action_label == null)
+              return null; // Remove the action key
+            if (ec.swapEnterActionKey)
+              return KeyValue.getKeyByName("enter");
+            return KeyValue.makeActionKey(action_label);
           case SWITCH_FORWARD:
             return (globalConfig.layouts.size() > 1) ? orig : null;
           case SWITCH_BACKWARD:
@@ -179,8 +182,8 @@ public final class LayoutModifier
         switch (orig.getKeyevent())
         {
           case KeyEvent.KEYCODE_ENTER:
-            if (ec.enter_key_replacement != null)
-              return ec.enter_key_replacement;
+            if (ec.swapEnterActionKey && ec.actionLabel != null)
+              return KeyValue.makeActionKey(ec.actionLabel);
             break;
         }
         break;
@@ -211,11 +214,10 @@ public final class LayoutModifier
       number_row_symbols = KeyboardData.load_row(res, R.xml.number_row);
       bottom_row = KeyboardData.load_row(res, R.xml.bottom_row);
       num_pad = KeyboardData.load_num_pad(res);
-      split_middle_column = KeyboardData.load_row(res, R.xml.split_middle_column);
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
-      throw new RuntimeException(e.getMessage()); // Not recoverable
+      throw new RuntimeException(); // Not recoverable
     }
   }
 }

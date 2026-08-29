@@ -2,7 +2,7 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.io.FileOutputStream
 
 plugins {
-  id("com.android.application") version "9.3.1"
+  id("com.android.application") version "9.3.2"
 }
 
 dependencies {

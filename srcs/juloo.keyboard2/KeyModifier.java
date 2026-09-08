@@ -121,19 +121,7 @@ public final class KeyModifier
   /** Return the compose state that modifies the numpad script. */
   public static int modify_numpad_script(String numpad_script)
   {
-    if (numpad_script == null)
-      return -1;
-    switch (numpad_script)
-    {
-      case "hindu-arabic": return ComposeKeyData.numpad_hindu;
-      case "bengali": return ComposeKeyData.numpad_bengali;
-      case "devanagari": return ComposeKeyData.numpad_devanagari;
-      case "persian": return ComposeKeyData.numpad_persian;
-      case "gujarati": return ComposeKeyData.numpad_gujarati;
-      case "kannada": return ComposeKeyData.numpad_kannada;
-      case "tamil": return ComposeKeyData.numpad_tamil;
-      default: return -1;
-    }
+    return -1;
   }
 
   /** Keys that do not match any sequence are greyed. */
@@ -178,12 +166,6 @@ public final class KeyModifier
     switch (k.getKind())
     {
       case Char: r = apply_dead_char(k.getChar(), dead_char); break;
-      case Editing:
-        switch (k.getEditing())
-        {
-          case SPACE_BAR: r = apply_dead_char(' ', dead_char); break;
-        }
-        break;
     }
     return (r == null) ? k : r;
   }
@@ -301,7 +283,6 @@ public final class KeyModifier
     {
       case UNDO: return "redo";
       case PASTE: return "pasteAsPlainText";
-      case SPACE_BAR: return "nbsp";
       default: return null;
     }
   }
@@ -384,13 +365,6 @@ public final class KeyModifier
           default: return k;
         }
         break;
-      case Editing:
-        switch (k.getEditing())
-        {
-          case SPACE_BAR: e = KeyEvent.KEYCODE_SPACE; break;
-          default: return k;
-        }
-        break;
       default: return k;
     }
     return k.withKeyevent(e);
@@ -428,12 +402,6 @@ public final class KeyModifier
           case KeyEvent.KEYCODE_FORWARD_DEL: name = "forward_delete_word"; break;
         }
         break;
-      case Editing:
-        switch (k.getEditing())
-        {
-          case BACKSPACE: name = "delete_word"; break;
-        }
-        break;
     }
     return (name == null) ? k : KeyValue.getKeyByName(name);
   }
@@ -460,12 +428,6 @@ public final class KeyModifier
         switch (k.getKeyevent())
         {
           case KeyEvent.KEYCODE_ESCAPE: name = "selection_cancel"; break;
-        }
-        break;
-      case Editing:
-        switch (k.getEditing())
-        {
-          case SPACE_BAR: name = "selection_cancel"; break;
         }
         break;
     }
@@ -531,17 +493,9 @@ public final class KeyModifier
       case Hangul_initial:
         // Finals that can also be initials have this kind.
         return combine_hangul_medial(kv, kv.getString().charAt(0), precomposed);
-      case Editing:
-        switch (kv.getEditing())
-        {
-          case SPACE_BAR:
-            return combine_hangul_medial(kv, ' ', precomposed);
-          default: break;
-        }
-        break;
-      default: break;
+      default:
+        return kv;
     }
-    return kv;
   }
 
   private static KeyValue combine_hangul_medial(KeyValue kv, char c,

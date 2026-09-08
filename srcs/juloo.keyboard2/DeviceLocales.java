@@ -36,7 +36,6 @@ public final class DeviceLocales
     public final String script;
     public final String default_layout; // Might be [null]
     public final ExtraKeys extra_keys;
-    public final String dictionary; // Might be [null]
 
     public Loc(InputMethodSubtype st)
     {
@@ -46,7 +45,6 @@ public final class DeviceLocales
       String extra_keys_s = st.getExtraValueOf("extra_keys");
       extra_keys = (extra_keys_s != null) ?
         ExtraKeys.parse(script, extra_keys_s) : ExtraKeys.EMPTY;
-      dictionary = st.getExtraValueOf("dictionary");
     }
   }
 

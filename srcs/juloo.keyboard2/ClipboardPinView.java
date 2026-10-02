@@ -38,7 +38,7 @@ public final class ClipboardPinView extends NonScrollListView
         ctx.getSharedPreferences("pinned_clipboards", Context.MODE_PRIVATE);
       load_from_prefs(_persist_store, _entries);
     }
-    catch (Exception _e) {}
+    catch (Exception ignored) {}
     _adapter = this.new ClipboardPinEntriesAdapter();
     setAdapter(_adapter);
   }
@@ -80,7 +80,7 @@ public final class ClipboardPinView extends NonScrollListView
       for (int i = 0; i < arr.length(); i++)
         dst.add(arr.getString(i));
     }
-    catch (JSONException _e) {}
+    catch (JSONException ignored) {}
   }
 
   void persist()

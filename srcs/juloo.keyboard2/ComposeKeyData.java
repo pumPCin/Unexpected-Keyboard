@@ -312,13 +312,5 @@ public final class ComposeKeyData
   public static final int accent_trema = 1362;
   public static final int compose = 1460;
   public static final int fn = 7897;
-  public static final int numpad_bengali = 8487;
-  public static final int numpad_devanagari = 8508;
-  public static final int numpad_gujarati = 8529;
-  public static final int numpad_hindu = 8550;
-  public static final int numpad_kannada = 8571;
-  public static final int numpad_persian = 8592;
-  public static final int numpad_tamil = 8613;
   public static final int shift = 8634;
-  public static final int substitutions = 8866;
 }

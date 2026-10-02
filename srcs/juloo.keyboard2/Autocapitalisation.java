@@ -69,7 +69,7 @@ public final class Autocapitalisation
         _should_update_caps_mode = true;
         break;
       case KeyEvent.KEYCODE_ENTER:
-        _cursor++;
+        _should_update_caps_mode = true;
         break;
     }
     callback(true);

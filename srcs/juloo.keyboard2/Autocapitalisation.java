@@ -63,7 +63,7 @@ public final class Autocapitalisation
         _should_update_caps_mode = true;
         break;
       case KeyEvent.KEYCODE_ENTER:
-        _should_update_caps_mode = true;
+        _cursor++;
         break;
       // Ignore shift key events to avoid interferences when it is disabled.
       case KeyEvent.KEYCODE_SHIFT_LEFT:

@@ -62,6 +62,15 @@ public final class VibratorCompat
     return _effect_tick;
   }
 
+  static VibrationEffect _effect_tick = null;
+
+  static VibrationEffect get_effect_tick()
+  {
+    if (_effect_tick == null)
+      _effect_tick = VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK);
+    return _effect_tick;
+  }
+
   static Vibrator vibrator_service = null;
 
   static Vibrator get_vibrator(View v)

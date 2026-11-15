@@ -17,8 +17,9 @@ android {
     applicationId = "juloo.keyboard2"
     minSdk = 21
     targetSdk { version = release(36) }
-    versionCode = 2220
-    versionName = "2.2.2"
+    versionCode = 2230
+    versionName = "2.2.3"
+    vectorDrawables.generatedDensities() // Reproducibility
   }
 
   sourceSets {
@@ -67,6 +68,7 @@ android {
       isDebuggable = false
       resValue("string", "app_name", "@string/app_name_release")
       signingConfig = signingConfigs["debug"]
+      isCrunchPngs = false // Reproducibility
     }
 
     named("debug") {
